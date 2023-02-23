@@ -45,61 +45,18 @@
             <div class="quiz-enun">
                 <!--incluir as questões via js-->
                 <div class="pontosquiz">
-                    <h3>Questão <span>1</span></h3>
-                    <div>Ainda não respondida</div>
-                    <div>Vale 1,00 ponto(s).</div>
+                    <h3>Questão <span id="current-question">1</span></h3>
+                    <div id="answered-status">Ainda não respondida</div>
+                    <div id="point-value">Vale <span id="current-points">1,00</span> ponto(s).</div>
                 </div>
                 <div class="quiz">
                     <div class="quiz-formulario">
                         <div class="qtext">
-                            <p>A Histologia é a parte da Biologia responsável pelo estudo dos tecidos, que podem ser
-                                divididos
-                                em
-                                quatro grupos. Entre os tecidos indicados a seguir, marque o único que não corresponde a
-                                um
-                                tipo
-                                de
-                                tecido conjuntivo.
-                                <br>
-                                A Histologia é a parte da Biologia responsável pelo estudo dos tecidos, que podem ser
-                                divididos
-                                em
-                                quatro grupos. Entre os tecidos indicados a seguir, marque o único que não corresponde a
-                                um
-                                tipo
-                                de
-                                tecido conjuntivo.
-                                <br>
-                                A Histologia é a parte da Biologia responsável pelo estudo dos tecidos, que podem ser
-                                divididos
-                                em
-                                quatro grupos. Entre os tecidos indicados a seguir, marque o único que não corresponde a
-                                um
-                                tipo
-                                de
-                                tecido conjuntivo.
-                                A Histologia é a parte da Biologia responsável pelo estudo dos tecidos, que podem ser
-                                divididos
-                                em
-                                quatro grupos. Entre os tecidos indicados a seguir, marque o único que não corresponde a
-                                um
-                                tipo
-                                de
-                                tecido conjuntivo.
-                                <br>
-                                A Histologia é a parte da Biologia responsável pelo estudo dos tecidos, que podem ser
-                                divididos
-                                em
-                                quatro grupos. Entre os tecidos indicados a seguir, marque o único que não corresponde a
-                                um
-                                tipo
-                                de
-                                tecido conjuntivo.
-                            </p>
+
                         </div>
                         <div class="ablock">
                             <div class="prompt">Escolha uma opção:</div>
-                            <div class="answer">
+                            <div class="answer" id="answer-options">
                                 <div class="r0">
                                     <input type="radio" name="numerodaquestao" value="0" id="nodoquiz:4_answer0">
                                     <label for="nodoquiz:4_answer0" class="alter">
@@ -143,7 +100,7 @@
             </div>
             <div class="submitbtn">
                 <input type="button" value="Página anterior" class="btanterior btn">
-                <input type="button" value="Próxima página" class="btproximo btn">
+                <input type="button" value="Próxima página" class="btproximo btn" id="next-button">
             </div>
         </form>
         <section class="quadrados">
