@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<!--LIT Provas - Sistema de aplicação de avaliações do grupo Christus usada pela Unichristus
+    - Sistema será responsável pela aplicação da prova aos alunos.
+    -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LIT Provas - Unichristus</title>
+    <meta name="description" content="Sistema de aplicação de avalioções da Unichristus">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="./public/img/favicon.ico" type="image/x-icon">
+
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <form class="container" action="#">
+        <div class="logo">
+            <img src="./public/img/LogoUniPX.png" alt="Logo do grupo Christus">
+        </div>
+        <div class="inputs">
+            <div class="login">
+
+                <div class="input">
+                    <input type="text" id="username" required="tes">
+                    <label for="username">Identificação do usuário</label>
+                    <span class="error"></span>
+                </div>
+                <div class="input">
+                    <input type="password" id="senha" required>
+                    <label for="senha">Senha</label>
+                    <span class="error"></span>
+                </div>
+                <button type="submit">Acessar</button>
+            </div>
+            <div class="cookies">
+                <span>O uso de Cookies deve ser permitido no seu navegador
+                </span>
+            </div>
+        </div>
+        </div>
+
+        <div class="feedback">
+            <p>Após a prova, <a href="https://local.unichristus.edu.br/feedbackprova/">aqui para visualizar o
+                    feedback!</a> </p>
+        </div>
+    </form>
+
+
+</body>
+
+</html>

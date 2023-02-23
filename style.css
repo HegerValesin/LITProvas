@@ -1,0 +1,182 @@
+:root {
+  --primary-color: #fdfdfd;
+  --bg-color: #def2f8;
+  --text-color: #f0f0f5;
+  --text: #000;
+  --white: #fff;
+  --red: #d9534f;
+  --info: #5bc0de;
+  --gray: #868e96;
+  --blue: #1177d1;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: local(Roboto), url(./public/Fonts/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Roboto Medium";
+  src: local(Roboto-Medium), url(./public/Fonts/Roboto-Medium.ttf);
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Roboto Bold";
+  src: local(Roboto-Bold), url(./public/Fonts/Roboto-Bold.ttf);
+  font-weight: 700;
+}
+
+html {
+  font-family: "Roboto-Regular", sans-serif;
+  height: 100%;
+}
+
+body {
+  height: 100vh;
+
+  font-family: -apple-system, blinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica", Arial, sans-serif, "Apple Color Emoj", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.5;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--primary-color);
+  color: #130f0d;
+}
+
+form {
+  background: rgba(255, 255, 255, 0.03);
+
+  width: 100vh;
+  height: 80vh;
+
+  margin: 32px auto;
+  padding: 20px 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.logo {
+  margin: 1rem;
+  position: relative;
+}
+
+div.input {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+input,
+button {
+  /* reset appeareance */
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+
+  /* box */
+  width: 100%;
+
+  padding: 16px 0;
+
+  border: none;
+  border-bottom: 1px solid var(--primary-color);
+
+  background-color: transparent;
+
+  outline: none;
+
+  /* text */
+  color: var(--gray);
+  font-size: 1em;
+}
+
+button {
+  margin-top: 16px;
+  background-color: var(--blue);
+  color: var(--white);
+}
+
+button:hover {
+  opacity: 0.7;
+
+  border-color: #0f3d66;
+}
+input ~ label {
+  position: absolute;
+  top: 16px;
+  left: 0;
+
+  color: rgba(122, 122, 122, 0.6);
+
+  transition: 0.4s;
+}
+
+input:focus ~ label,
+input:valid ~ label {
+  transform: translateY(-24px);
+  font-size: 0.8em;
+  letter-spacing: 0.1em;
+}
+
+.input span.error {
+  display: flex;
+
+  padding: 0;
+
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.input span.error.active {
+  border: 1px solid red;
+  padding: 0.4em;
+}
+.inputs {
+  display: flex;
+  background-color: #fbfdff;
+  border: 0.5px solid #e6e8eb;
+}
+
+.login {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.cookies {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.cookies span {
+  margin-top: 15px;
+}
+
+.feedback {
+  width: 72vh;
+  height: 10vh;
+  margin: 5px;
+  border: 0.5px solid #e6e8eb;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
