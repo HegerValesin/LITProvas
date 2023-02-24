@@ -247,17 +247,37 @@ header .header-bg .users a img {
 .r0 {
   padding: 0.3em 0.3em 0.3em 25px;
   text-indent: -25px;
+
 }
 .r0 input {
   margin-right: 5px;
 }
 
+.r0 input[type="radio"],
+.r0 label {
+  display: inline-block;
+}
+
+.r0 label p {
+  margin-left: 1.5em;
+}
+
 .r1 {
   padding: 0.3em 0.3em 0.3em 25px;
   text-indent: -25px;
+
 }
 .r1 input {
   margin-right: 5px;
+}
+
+.r1 input[type="radio"],
+.r1 label {
+  display: inline-block;
+}
+
+.r1 label p {
+  margin-left: 1.5em;
 }
 
 .quadrados {
