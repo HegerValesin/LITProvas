@@ -1,112 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>LIT Provas - Unichristus</title>
-    <link rel="shortcut icon" href="../../../public/img/favicon.ico" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="../../../public/img/favicon.ico"
+      type="image/x-icon"
+    />
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 
     <script src="../../../public/js/script.js" defer></script>
     <script src="script.js" defer></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <div class="header-bg">
-            <div class="logo">
-                <img src="../../../public/img/LogoU.png" alt="Simbolo da Unichristus">
-                <label> Ambiente de Provas </label>
-            </div>
-            <div class="ambiente">
-
-            </div>
-            <div class="users">
-                <label id="username">Heger Valesin</label>
-                <img class="userimg" src="../../../public/img/avatar.png" alt="Foto do usuario">
-                <a href="../../../index.html">Sair <img src="../../../public/img/sair.png" alt="" srcset=""></a>
-            </div>
+      <div class="header-bg">
+        <div class="logo">
+          <img
+            src="../../../public/img/LogoU.png"
+            alt="Simbolo da Unichristus"
+          />
+          <label> Ambiente de Provas </label>
         </div>
+        <div class="ambiente"></div>
+        <div class="users">
+          <label id="username">Heger Valesin</label>
+          <img
+            class="userimg"
+            src="../../../public/img/avatar.png"
+            alt="Foto do usuario"
+          />
+          <a href="../../../index.html"
+            >Sair <img src="../../../public/img/sair.png" alt="" srcset=""
+          /></a>
+        </div>
+      </div>
     </header>
     <section>
-        <div class="main-container">
-            <div class="top-container">
-                <!-- Conteúdo da div de cima aqui -->
-
-            </div>
+      <div class="main-container">
+        <div class="top-container">
+          <!-- Conteúdo da div de cima aqui -->
         </div>
+      </div>
     </section>
     <div class="tela-quiz">
-        <form class="quadro-quiz">
-            <div class="quiz-enun">
-                <!--incluir as questões via js-->
-                <div class="pontosquiz">
-                    <h3>Questão <span id="current-question">1</span></h3>
-                    <div id="answered-status">Ainda não respondida</div>
-                    <div id="point-value">Vale <span id="current-points">1,00</span> ponto(s).</div>
-                </div>
-                <div class="quiz">
-                    <div class="quiz-formulario">
-                        <div class="qtext" id="qtext">
-
-                        </div>
-                        <div class="ablock">
-                            <div class="prompt">Escolha uma opção:</div>
-                            <div class="answer" id="answer-options">
-                                
-                               <!-- <div class="r0">
+      <section class="quadrados">
+        <div class="card-text" id="card-text">
+          <!-- <button class="bt-quiz bt-quiz-x" id="1">1</button>
+                <button class="bt-quiz bt-quiz-active" id="2">2</button>
+                <button class="bt-quiz" id="3">3</button>
+                <button class="bt-quiz" id="4">4</button>-->
+        </div>
+      </section>
+      <form class="quadro-quiz">
+        <div class="quiz-enun">
+          <!--incluir as questões via js-->
+          <div class="pontosquiz">
+            <h3>Questão <span id="current-question">1</span></h3>
+            <div id="answered-status">Ainda não respondida</div>
+            <div id="point-value">
+              Vale <span id="current-points">1,00</span> ponto(s).
+            </div>
+          </div>
+          <div class="quiz">
+            <div class="quiz-formulario">
+              <div class="qtext" id="qtext"></div>
+              <div class="ablock">
+                <div class="prompt active">Escolha uma opção:</div>
+                <div class="answer" id="answer-options">
+                  <!-- <div class="r0">
                                     <input type="radio" name="numerodaquestao" value="4" id="nodoquiz:4_answer4">
                                     <label for="nodoquiz:4_answer4" class="alter">
                                         <span class="answernumber"> e. </span>
                                         E
                                     </label>
                                 </div>-->
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
+              </div>
             </div>
-            <div class="submitbtn">
-                <input type="button" value="Página anterior" class="btanterior btn" id="previousbutton">
-                <input type="button" value="Próxima página" class="btproximo btn" id="nextbutton">
-            </div>
-        </form>
-        <section class="quadrados">
-            <div class="card-text">
-                <a class="qnbutton bt-scondary btn" id="qnbuttom1" title="Ainda não respondido" data-quiz-page="0"
-                    href="">
-                    <span class="span01"></span>
-                    <span class="span02"></span>
-                    <span class="accesshide">Qestão </span>
-                    1
-                </a>
-                <a class="qnbutton bt-scondary btn" id="qnbuttom2" title="Ainda não respondido" data-quiz-page="1"
-                    href="">
-                    <span class="span01"></span>
-                    <span class="span02"></span>
-                    <span class="accesshide">Qestão </span>
-                    2
-                </a>
-                <a class="qnbutton bt-scondary" id="qnbuttom3" title="Ainda não respondido" data-quiz-page="2" href="">
-                    <span class="span01"></span>
-                    <span class="span02"></span>
-                    <span class="accesshide">Qestão </span>
-                    3
-                </a>
-                <a class="qnbutton bt-scondary" id="qnbuttom4" title="Ainda não respondido" data-quiz-page="3" href="">
-                    <span class="span01"></span>
-                    <span class="span02"></span>
-                    <span class="accesshide">Qestão </span>
-                    4
-                </a>
-            </div>
-        </section>
+          </div>
+        </div>
+        <div class="submitbtn">
+          <input
+            type="button"
+            value="Página anterior"
+            class="btanterior btn"
+            id="previousbutton"
+          />
+          <input
+            type="button"
+            value="Próxima página"
+            class="btproximo btn"
+            id="nextbutton"
+          />
+        </div>
+      </form>
     </div>
-</body>
-
+  </body>
 </html>

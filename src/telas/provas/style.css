@@ -138,7 +138,7 @@ header .header-bg .users a img {
   margin: 10px 0px;
   border: 1px solid #cccccc;
 
-  font-size: 30px;
+  font-size: 20px;
   color: var(--gray);
 
   display: flex;
@@ -146,7 +146,7 @@ header .header-bg .users a img {
 }
 
 .top-container div {
-  margin: 10px 20px 10px 20px;
+  margin: 3px 10px 3px 10px;
 }
 
 .top-container label {
@@ -157,14 +157,15 @@ header .header-bg .users a img {
   margin: 10px;
 
   display: flex;
+  flex-wrap: wrap;
 }
 
 .quadro-quiz {
-  width: 80%;
+  width: 100%;
   height: fit-content;
   border: 1px solid #cccccc;
 
-  margin: 5px 3px;
+  margin-top: 5px;
 }
 .quiz-enun {
   width: 100%;
@@ -242,6 +243,11 @@ header .header-bg .users a img {
 .prompt {
   margin: 15px 0 10px 0;
   box-sizing: border-box;
+  visibility: hidden;
+}
+
+.prompt.active {
+  visibility: visible;
 }
 
 .r0 {
@@ -281,7 +287,7 @@ header .header-bg .users a img {
 }
 
 .quadrados {
-  width: 20%;
+  width: 100%;
   float: right;
   margin-top: 5px;
   display: block;
@@ -291,82 +297,41 @@ header .header-bg .users a img {
 }
 
 .card-text {
-  margin-top: 1rem !important;
-  margin-left: 1rem;
+  margin: 2px !important;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.qnbutton {
-  text-decoration: none;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-
-  background-color: #fff;
-  background-image: none;
-  background: #ddd;
-
-  text-align: center;
-
-  color: #212529;
-
-  height: 40px;
-  width: 30px;
-
-  display: block;
-  position: relative;
-  float: left;
-
-  padding: 0;
-
-  border-radiux: 3px;
-  border: 0;
-  overflow: visible;
-  margin: 0 6px 6px 0;
-  cursor: pointer;
-}
 .bt-scondary {
   color: #212529;
   background-color: #ced4da;
   border-color: #ced4da;
 }
 
-.qnbutton .span01 {
-  border: 1px solid;
-  border-radiux: 3px;
-  z-index: 1;
-
-  display: block;
-  position: absolute;
-  top: 0;
-  button: 0;
-  left: 0;
-  right: 0;
-}
-
-.span02 {
-  background-color: #fff;
-}
-
-.qnbutton .span02 {
-  border: 0;
-  background: #fff none center/10px no-repeat scoll;
+.bt-quiz { 
+  width: 20px;
   height: 20px;
-  margin-top: 20px;
-  border-radius: 0 0 3px 3px;
+  margin: 2px;
+  padding: 2px;
+
+
+  background-color: var(--gray);
+  
+
+  opacity: 0.5;
 }
 
-.accesshide {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  clip-path: inset(50%);
-  border: 0;
+.bt-quiz-x { 
+  border: 1px solid #000;
+   
+  opacity: 1;
 }
 
+.bt-quiz-active { 
+  border-top: 2px solid #000;
+}
 .submitbtn {
   clear: left;
   text-align: left;
