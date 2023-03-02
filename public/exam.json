@@ -15,6 +15,7 @@
         {
           "questionOrder": 1,
           "type": 1,
+          "points": 1.00,
           "statement": "<p>Qual a cor do cavalo branco de Napoleão?</p>",
           "alternatives": {
             "alternative": [
@@ -44,6 +45,7 @@
         {
           "questionOrder": 2,
           "type": 1,
+          "points": 1.40,
           "statement": "<p>Qual o nome do maior rio brasileiro?</p>",
           "alternatives": {
             "alternative": [
@@ -72,7 +74,14 @@
         },
         {
           "questionOrder": 3,
+          "type": 0,
+          "points": 0.50,
+          "statement": "<p>Qual a diferrença entre eu e você.</p>"
+        },
+        {
+          "questionOrder": 4,
           "type": 1,
+          "points": 2.00,
           "statement": "<p>Quem descobriu o Brasil foi Pedro Álvares Ca...</p>",
           "alternatives": {
             "alternative": [
@@ -100,8 +109,9 @@
           }
         },
         {
-          "questionOrder": 4,
+          "questionOrder": 5,
           "type": 0,
+          "points": 0.50,
           "statement": "<p>Diga com uma letra um resumo das 10 temporadas de Game of Thrones.</p>"
         }
       ]

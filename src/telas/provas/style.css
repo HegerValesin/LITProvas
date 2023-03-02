@@ -243,11 +243,12 @@ header .header-bg .users a img {
 .prompt {
   margin: 15px 0 10px 0;
   box-sizing: border-box;
-  visibility: hidden;
+  display: none;
+  
 }
 
 .prompt.active {
-  visibility: visible;
+  display: block;
 }
 
 .r0 {
@@ -296,6 +297,11 @@ header .header-bg .users a img {
   border: 1px solid #cad0d7;
 }
 
+textarea {
+  width: 95%;
+  margin-top: 10px;
+
+}
 .card-text {
   margin: 2px !important;
   
