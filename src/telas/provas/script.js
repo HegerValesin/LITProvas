@@ -17,18 +17,49 @@ const answeredStatusElement = document.getElementById('answered-status');
 const currentPointsElement = document.getElementById('current-points');
 const previousButton = document.getElementById("previousbutton");
 
+const Modal = {
+    open() {
+        document.querySelector('.modal-aceite').classList.add('active')
+    },
+
+    close() {
+        document.querySelector('.modal-aceite').classList.remove('active')
+    },
+
+    aceite(event) {
+        event.preventDefault();
+
+        window.location.href = "../provas/prova.html";
+    }
+}
+
 // Carrega as perguntas do arquivo exam.json
 fetch('../../../public/exam.json')
     .then(response => response.json())
     .then(data => {
         questions = data.exam.questions.question.map(question => question);
 
-        // console.log(questions);
+      //  console.log(questions);
         creatButtons();
         showCurrentQuestion();
         renderQuestion();
-        loadAnswers()
+        loadAnswers();
+        criarstorage();
     });
+
+    function criarstorage(){
+        let data = {
+            prova: 171717
+        }
+        let get = JSON.parse(localStorage.getItem(data.prova));
+        if (!get){
+            let getnew = [];
+            for(i = 0; i < questions.length; i++){
+                getnew.push({question: questions[i].questionOrder, alternative: ""});
+            }
+            localStorage.setItem(`${data.prova}`, JSON.stringify(getnew));
+        }
+    }
 
 // Mostra a pergunta atual
 function showCurrentQuestion() {
@@ -102,6 +133,8 @@ prevButton.addEventListener("click", () => {
             if (currentQuestionIndex === 0) {
                 prevButton.disabled = true;
             }
+            document.querySelector('.btproximo').classList.remove('btnactive');
+            document.querySelector('.btnfinalizar').classList.add('btnactive');
             nextButton.disabled = false;
             loadAnswers()
         }
@@ -114,6 +147,9 @@ prevButton.addEventListener("click", () => {
         if (currentQuestionIndex === 0) {
             prevButton.disabled = true;
         }
+
+        document.querySelector('.btproximo').classList.remove('btnactive');
+        document.querySelector('.btnfinalizar').classList.add('btnactive');
         nextButton.disabled = false;
         loadAnswers()
     }
@@ -137,6 +173,8 @@ nextButton.addEventListener("click", function () {
             renderQuestion()
             if (currentQuestionIndex === questions.length - 1) {
                 nextButton.disabled = true;
+                document.querySelector('.btproximo').classList.add('btnactive');
+                document.querySelector('.btnfinalizar').classList.remove('btnactive')
             }
             prevButton.disabled = false;
             setCustomMude(currentQuestionIndex)
@@ -152,6 +190,8 @@ nextButton.addEventListener("click", function () {
         renderQuestion()
         if (currentQuestionIndex === questions.length - 1) {
             nextButton.disabled = true;
+            document.querySelector('.btproximo').classList.add('btnactive');
+            document.querySelector('.btnfinalizar').classList.remove('btnactive')
         }
         prevButton.disabled = false;
         setCustomMude(currentQuestionIndex);
@@ -235,7 +275,6 @@ function loadAnswers() {
     const examName = '171717';
     let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
     let get = JSON.parse(localStorage.getItem(examName));
-    console.log("get",get)
 
     if (get){
     let respostaSalva = get.filter(item => item.question == numeroQuestion);
@@ -270,19 +309,16 @@ function setAnswer(answers) {
 }
 
 function storage(data) {
-
     let get = JSON.parse(localStorage.getItem(data.prova));
     let newQuestion = get.filter(item => item.question == data.questao);
 
     if (newQuestion.length != 0){
-
         let storagequest = get.map(items => {
             if(items.question == data.questao){
                 return {question: items.question, alternative: data.resposta}
             }
             return {question: items.question, alternative: items.alternative}
         })
-
         localStorage.setItem(`${data.prova}`, JSON.stringify(storagequest));
     }else {
         get.push({question: data.questao, alternative: data.resposta});

@@ -365,7 +365,95 @@ textarea {
   opacity: 0.7;
 }
 
+.btnfinalizar {
+  color: #fff;
+  background-color: #1177d1;
+  border-color: #1177d1;
+
+  opacity: 0.7;
+}
+
+.btnactive {
+  display: none;
+}
+
 .btanterior:hover,
-.btproximo:hover {
+.btproximo:hover,
+.btnfinalizar:hover {
+  opacity: 1;
+}
+
+/*-----Modal-----*/
+
+.modal-aceite {
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 0.7);
+
+  position: fixed;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  visibility: hidden;
+
+  z-index: 999;
+}
+.modal-aceite.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: #f0f2f5;
+  padding: 2.4rem;
+
+  position: relative;
+  z-index: 1;
+}
+
+#from {
+  max-width: 500px;
+}
+
+#from h4 {
+  margin-top: 0;
+}
+
+.input-grupo {
+  margin-top: 0.8rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-grupo .button,
+.input-grupo button {
+  width: 48%;
+}
+
+.button.cancel {
+  color: var(--red);
+  border: 2px var(--red) solid;
+  border-radius: 0.25rem;
+
+  height: 50px;
+  text-decoration: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.6;
+
+  margin-top: 20px;
+}
+
+.button.cancel:hover {
   opacity: 1;
 }
