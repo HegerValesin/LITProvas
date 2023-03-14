@@ -335,6 +335,10 @@ textarea {
   opacity: 1;
 }
 
+.bt-quiz-y {
+  color : #ff0000
+}
+
 .bt-quiz-active { 
   border-top: 2px solid #000;
 }

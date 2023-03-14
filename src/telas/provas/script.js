@@ -1,6 +1,8 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
+let prova = "";
 let insertRespostaQuest = [];
+let statusAtual = "";
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -37,27 +39,27 @@ const Modal = {
 fetch('../../../public/exam.json')
     .then(response => response.json())
     .then(data => {
+        prova = data.exam.id;
         questions = data.exam.questions.question.map(question => question);
 
-      //  console.log(questions);
+       //console.log(questions);
+       //console.log(prova);
         creatButtons();
         showCurrentQuestion();
-        renderQuestion();
         loadAnswers();
         criarstorage();
+        renderQuestion();
     });
 
     function criarstorage(){
-        let data = {
-            prova: 171717
-        }
-        let get = JSON.parse(localStorage.getItem(data.prova));
+       
+        let get = JSON.parse(localStorage.getItem(prova));
         if (!get){
             let getnew = [];
             for(i = 0; i < questions.length; i++){
-                getnew.push({question: questions[i].questionOrder, alternative: ""});
+                getnew.push({question: questions[i].questionOrder, alternative: "", status: "Ainda não Respondida"});
             }
-            localStorage.setItem(`${data.prova}`, JSON.stringify(getnew));
+            localStorage.setItem(`${prova}`, JSON.stringify(getnew));
         }
     }
 
@@ -98,9 +100,10 @@ function showCurrentQuestion() {
     setCustomMude(currentQuestionIndex);
 }
 
+//crias os botões e tbm verifca se esta respondido ou não.
 function creatButtons() {
     var cardbutton = document.getElementById("card-text");
-
+    
     for (var i = 0; i < questions.length; i++) {
         var button = document.createElement("button");
         button.id = "btn-" + (i + 1);
@@ -123,27 +126,28 @@ prevButton.addEventListener("click", () => {
 
     console.log("selectedOption", selectedOption)
     if (!selectedOption) {
-        var consfirmar = confirm("Você não selecionou nenhuma opção!");
+        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
         if (consfirmar) {
+            statusAtual = "Ainda não foi respondida";
             saveAnswer();
             currentQuestionIndex--;
             showCurrentQuestion();
-            showPrevisiousQuestion();
-
+            renderQuestion();
             if (currentQuestionIndex === 0) {
                 prevButton.disabled = true;
             }
             document.querySelector('.btproximo').classList.remove('btnactive');
             document.querySelector('.btnfinalizar').classList.add('btnactive');
             nextButton.disabled = false;
+            setCustomMude(currentQuestionIndex)
             loadAnswers()
         }
     } else {
+        statusAtual = "Respondida";
         saveAnswer();
         currentQuestionIndex--;
         showCurrentQuestion();
-        showPrevisiousQuestion();
-
+        renderQuestion();
         if (currentQuestionIndex === 0) {
             prevButton.disabled = true;
         }
@@ -151,6 +155,7 @@ prevButton.addEventListener("click", () => {
         document.querySelector('.btproximo').classList.remove('btnactive');
         document.querySelector('.btnfinalizar').classList.add('btnactive');
         nextButton.disabled = false;
+        setCustomMude(currentQuestionIndex)
         loadAnswers()
     }
     console.log("Voltar")
@@ -165,8 +170,9 @@ nextButton.addEventListener("click", function () {
     const selectedOption = ael_quizType ? ael_AnswerOptions.querySelector('#answer').value : ael_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
 
     if (!selectedOption) {
-        var consfirmar = confirm("Você não selecionou nenhuma opção!");
+        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
         if (consfirmar) {
+            statusAtual = "Ainda não foi respondida";
             saveAnswer();
             currentQuestionIndex++;
             showCurrentQuestion()
@@ -184,6 +190,7 @@ nextButton.addEventListener("click", function () {
             return;
         }
     } else {
+        statusAtual = "Respondida";
         saveAnswer()
         currentQuestionIndex++;
         showCurrentQuestion()
@@ -205,27 +212,11 @@ function renderQuestion() {
     currentQuestionNumberElement.innerText = `${currentQuestionIndex + 1}`;
 
     // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
+    let getStatus = JSON.parse(localStorage.getItem(prova));
     const currentQuestion = questions[currentQuestionIndex];
-    const isAnswered = null;
-    answeredStatusElement.innerText = isAnswered ? 'Respondida' : 'Ainda não Respondida';
+    let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
+    answeredStatusElement.innerText = questionStatus[0].status;
 
-    // Atualiza a pontuação atual (se houver)
-    if (currentQuestion.points !== undefined) {
-        currentPointsElement.innerText = `${currentQuestion.points}`;
-    } else {
-        currentPointsElement.innerText = '';
-    }
-}
-
-function showPrevisiousQuestion() {
-    let correnteQestionInd = parseFloat(document.getElementById('current-question').innerText);
-
-    currentQuestionNumberElement.innerText = `${correnteQestionInd - 1}`;
-
-    // Atualiza o status da pergunta (respondida ou não)
-    const currentQuestion = questions[currentQuestionIndex];
-    const isAnswered = 1;
-    answeredStatusElement.innerText = isAnswered ? 'Respondida' : 'Ainda não Respondida';
     // Atualiza a pontuação atual (se houver)
     if (currentQuestion.points !== undefined) {
         currentPointsElement.innerText = `${currentQuestion.points}`;
@@ -247,8 +238,14 @@ function setCustomMude(contIndex) {
         btActive.classList.add("bt-quiz-active");
     }
     if (btBefore) {
-        btBefore.classList.add("bt-quiz-x")
-        btBefore.classList.remove("bt-quiz-active")
+        if(statusAtual=="Respondida"){
+            btBefore.classList.add("bt-quiz-x")
+            btBefore.classList.remove("bt-quiz-active")
+            btBefore.classList.remove("bt-quiz-y")
+        } else{
+            btBefore.classList.add("bt-quiz-y")
+            btBefore.classList.remove("bt-quiz-active")
+        }
     }
 }
 
@@ -260,21 +257,21 @@ function saveAnswer() {
     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    const examName = '171717';
+    
 
     let data = {
-        prova: examName,
+        prova: prova,
         questao: currentQuestion,
-        resposta: answer
+        resposta: answer,
+        status:  statusAtual
     }
     storage(data);
 }
 
 // Carregando os dados das respostas do localStorage
 function loadAnswers() {
-    const examName = '171717';
     let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
-    let get = JSON.parse(localStorage.getItem(examName));
+    let get = JSON.parse(localStorage.getItem(prova));
 
     if (get){
     let respostaSalva = get.filter(item => item.question == numeroQuestion);
@@ -315,13 +312,13 @@ function storage(data) {
     if (newQuestion.length != 0){
         let storagequest = get.map(items => {
             if(items.question == data.questao){
-                return {question: items.question, alternative: data.resposta}
+                return {question: items.question, alternative: data.resposta, status: data.status}
             }
-            return {question: items.question, alternative: items.alternative}
+            return {question: items.question, alternative: items.alternative, status: items.status}
         })
         localStorage.setItem(`${data.prova}`, JSON.stringify(storagequest));
     }else {
-        get.push({question: data.questao, alternative: data.resposta});
+        get.push({question: data.questao, alternative: data.resposta, status: data.status});
         localStorage.setItem(`${data.prova}`, JSON.stringify(get));
     }
 }

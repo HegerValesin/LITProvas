@@ -16,7 +16,7 @@
           "questionOrder": 1,
           "type": 1,
           "points": 1.00,
-          "statement": "<p>Qual a cor do cavalo branco de Napoleão?</p>",
+          "statement": "<p>Qual a cor do cavalo branco de Napoleão?  </p>  ",
           "alternatives": {
             "alternative": [
               {
