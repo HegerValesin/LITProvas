@@ -125,7 +125,6 @@ prevButton.addEventListener("click", () => {
     const pb_quizType = pb_AnswerOptions.querySelector("#type")?.textContent === '0';
     const selectedOption = pb_quizType ? pb_AnswerOptions.querySelector('#answer').value : pb_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
 
-    console.log("selectedOption", selectedOption)
     if (!selectedOption) {
         var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
         if (consfirmar) {
@@ -228,17 +227,44 @@ function renderQuestion() {
 
 //botões de questões
 function setCustomMude(contIndex) {
-
     var btafter = contIndex + 1;
-    var btBeforeIndex = contIndex;
+    var btBeforeIndex = 0;
     
-    var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+    
+
+   
     var btActive = document.getElementById(`btn-${btafter}`);
+
+    const cards = JSON.parse(localStorage.getItem(prova));
+
+    // Adiciona um evento de clique em cada card
+    cards.forEach((card, index) => {
+        console.log(index)
+        btBeforeIndex = index + 1;
+        console.log(btBeforeIndex)
+        var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+
+      if (card.status === "Ainda não foi respondida"){
+        btBefore.classList.add("bt-quiz-y")
+        btBefore.classList.remove("bt-quiz-active")
+        console.log("não foi")
+      };
+      if(card.status === "Respondida"){
+        btBefore.classList.add("bt-quiz-x")
+        btBefore.classList.remove("bt-quiz-active")
+        btBefore.classList.remove("bt-quiz-y")
+        console.log("respon")
+    };
+    if(card.status === "Ainda não respondida"){
+        btBefore.classList.remove("bt-quiz-active")
+    };
+    });
+
 
     if (btActive) {
         btActive.classList.add("bt-quiz-active");
     }
-    if (btBefore) {
+   /* if (btBefore) {
         if(statusAtual=="Respondida"){
             btBefore.classList.add("bt-quiz-x")
             btBefore.classList.remove("bt-quiz-active")
@@ -247,18 +273,22 @@ function setCustomMude(contIndex) {
             btBefore.classList.add("bt-quiz-y")
             btBefore.classList.remove("bt-quiz-active")
         }
-    }
+    }*/
 }
 
 // Salvando os dados da resposta no localStorage
 function saveAnswer() {
     const answerOptions = document.querySelector('#answer-options');
     const quizType = answerOptions.querySelector("#type")?.textContent === '0';
-    const answer = quizType ? answerOptions.querySelector('#answer').value : answerOptions.querySelector('input[name="answer"]:checked')?.value;
+    let answer = quizType ? answerOptions.querySelector('#answer').value : answerOptions.querySelector('input[name="answer"]:checked')?.value;
     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    
+    console.log(answer)
+    if(answer === undefined) {
+        answer = "";
+        console.log(answer)
+    }
 
     let data = {
         prova: prova,

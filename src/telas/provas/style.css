@@ -318,10 +318,9 @@ textarea {
 
 .bt-quiz { 
   width: 20px;
-  height: 20px;
+  height: 30px;
   margin: 2px;
   padding: 2px;
-
 
   background-color: var(--gray);
   
@@ -336,11 +335,13 @@ textarea {
 }
 
 .bt-quiz-y {
-  color : #ff0000
+  color : #ff0000;
+  border: 1px solid #dcf50b;
 }
 
 .bt-quiz-active { 
-  border-top: 2px solid #000;
+  border-top: 3px solid #000;
+  color: blue;
 }
 .submitbtn {
   clear: left;
