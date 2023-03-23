@@ -3,6 +3,7 @@ let questions = [];
 let prova = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
+let statusBtn = [];
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -44,10 +45,10 @@ fetch('../../../public/exam.json')
 
        //console.log(questions);
        //console.log(prova);
+        criarstorage();
         creatButtons();
         showCurrentQuestion();
         loadAnswers();
-        criarstorage();
         renderQuestion();
     });
 
