@@ -1,6 +1,9 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
+var localStorageQuestions = [];
+var lengthLocal;
 let prova = "";
+let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
@@ -42,32 +45,44 @@ fetch('../../../public/exam.json')
     .then(data => {
         prova = data.exam.id;
         questions = data.exam.questions.question.map(question => question);
+        console.log(questions)
 
-       //console.log(questions);
-       //console.log(prova);
-        criarstorage();
-        creatButtons();
-        showCurrentQuestion();
-        loadAnswers();
-        renderQuestion();
+       questProva = `quest_${prova}`;
+       localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
+   
+       if (!localStorageQuestions){
+           if(localStorageQuestions != questProva){
+           localStorage.setItem(questProva, JSON.stringify(questions));
+         }
+       }
+       localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
+       lengthLocal = localStorageQuestions.length;
+       
+       criarstorage();
+       creatButtons();
+       showCurrentQuestion();
+       loadAnswers();
+       renderQuestion();
     });
 
-    function criarstorage(){
+function criarstorage(){
        
         let get = JSON.parse(localStorage.getItem(prova));
         if (!get){
             let getnew = [];
-            for(i = 0; i < questions.length; i++){
-                getnew.push({question: questions[i].questionOrder, alternative: "", status: "Ainda não Respondida"});
+            for(i = 0; i < localStorageQuestions.length; i++){
+                getnew.push({question: localStorageQuestions[i].questionOrder, alternative: "", status: "Ainda não Respondida"});
             }
             localStorage.setItem(`${prova}`, JSON.stringify(getnew));
         }
-    }
+}
 
 // Mostra a pergunta atual
 function showCurrentQuestion() {
+   
+    localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));
     // Obter a pergunta atual
-    const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = localStorageQuestions[currentQuestionIndex];
 
     // Renderiza o título da questão
     questionTextElement.innerHTML = `${currentQuestion.statement}`;
@@ -101,15 +116,84 @@ function showCurrentQuestion() {
     setCustomMude(currentQuestionIndex);
 }
 
+const bntQuest = {
+    muda(btnN) {
+        console.log("agor",btnN)
+
+        const btn_AnswerOptions = document.querySelector('#answer-options');
+        const btn_quizType = btn_AnswerOptions.querySelector("#type")?.textContent === '0';
+        const btnSelectedOption = btn_quizType ? btn_AnswerOptions.querySelector('#answer').value : btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
+
+    if (!btnSelectedOption) {
+        var btnconsfirmar = confirm("A questão não foi respondida, deseja prosegir?");
+        if (btnconsfirmar) {
+            statusAtual = "Ainda não foi respondida";
+            saveAnswer();
+            currentQuestionIndex = (btnN - 1);
+            showCurrentQuestion()
+            renderQuestion()
+            if (currentQuestionIndex === lengthLocal-1) {
+                nextButton.disabled = true;
+                document.querySelector('.btproximo').classList.add('btnactive');
+                document.querySelector('.btnfinalizar').classList.remove('btnactive')
+            } else {
+                document.querySelector('.btproximo').classList.remove('btnactive');
+                document.querySelector('.btnfinalizar').classList.add('btnactive');
+                nextButton.disabled = false;
+            }
+            if (currentQuestionIndex === 0) {
+                prevButton.disabled = true;
+            }else {
+                prevButton.disabled = false;
+            }
+            
+            setCustomMude(currentQuestionIndex)
+            loadAnswers()
+
+        } else {
+            return;
+        }
+    } else {
+        statusAtual = "Respondida";
+        saveAnswer()
+        currentQuestionIndex = (btnN - 1);
+        showCurrentQuestion()
+        renderQuestion()
+        if (currentQuestionIndex === lengthLocal-1) {
+            nextButton.disabled = true;
+            document.querySelector('.btproximo').classList.add('btnactive');
+            document.querySelector('.btnfinalizar').classList.remove('btnactive')
+        } else {
+            document.querySelector('.btproximo').classList.remove('btnactive');
+            document.querySelector('.btnfinalizar').classList.add('btnactive');
+            prevButton.disabled = false;
+        }
+        if (currentQuestionIndex === 0) {
+            prevButton.disabled = true;
+        }
+        setCustomMude(currentQuestionIndex)
+        loadAnswers()
+    }
+    console.log("proximo btn")
+
+    }
+}
+
 //crias os botões e tbm verifca se esta respondido ou não.
 function creatButtons() {
     var cardbutton = document.getElementById("card-text");
     
-    for (var i = 0; i < questions.length; i++) {
+    for (var i = 0; i < localStorageQuestions.length; i++) {
         var button = document.createElement("button");
         button.id = "btn-" + (i + 1);
         button.className = "bt-quiz";
         button.innerText = i + 1;
+
+        button.onclick = (function(index) {
+            return function() {
+              bntQuest.muda(index);
+            };
+          })(i + 1);
 
         cardbutton.appendChild(button);
     };
@@ -229,31 +313,22 @@ function renderQuestion() {
 function setCustomMude(contIndex) {
     var btafter = contIndex + 1;
     var btBeforeIndex = 0;
-    
-    
-
-   
     var btActive = document.getElementById(`btn-${btafter}`);
-
     const cards = JSON.parse(localStorage.getItem(prova));
 
     // Adiciona um evento de clique em cada card
     cards.forEach((card, index) => {
-        console.log(index)
         btBeforeIndex = index + 1;
-        console.log(btBeforeIndex)
         var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
 
       if (card.status === "Ainda não foi respondida"){
         btBefore.classList.add("bt-quiz-y")
         btBefore.classList.remove("bt-quiz-active")
-        console.log("não foi")
       };
       if(card.status === "Respondida"){
         btBefore.classList.add("bt-quiz-x")
         btBefore.classList.remove("bt-quiz-active")
         btBefore.classList.remove("bt-quiz-y")
-        console.log("respon")
     };
     if(card.status === "Ainda não respondida"){
         btBefore.classList.remove("bt-quiz-active")
@@ -284,10 +359,8 @@ function saveAnswer() {
     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    console.log(answer)
     if(answer === undefined) {
         answer = "";
-        console.log(answer)
     }
 
     let data = {
