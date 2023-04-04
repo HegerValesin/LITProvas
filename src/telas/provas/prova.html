@@ -52,10 +52,7 @@
     <div class="tela-quiz">
       <section class="quadrados">
         <div class="card-text" id="card-text">
-          <!-- <button class="bt-quiz bt-quiz-x" id="1">1</button>
-                <button class="bt-quiz bt-quiz-active" id="2">2</button>
-                <button class="bt-quiz" id="3">3</button>
-                <button class="bt-quiz" id="4">4</button>-->
+         
         </div>
       </section>
       <form class="quadro-quiz">
@@ -74,13 +71,7 @@
               <div class="ablock">
                 <div class="prompt active">Escolha uma opção:</div>
                 <div class="answer" id="answer-options">
-                  <!-- <div class="r0">
-                                    <input type="radio" name="numerodaquestao" value="4" id="nodoquiz:4_answer4">
-                                    <label for="nodoquiz:4_answer4" class="alter">
-                                        <span class="answernumber"> e. </span>
-                                        E
-                                    </label>
-                                </div>-->
+               
                 </div>
               </div>
             </div>
@@ -104,11 +95,27 @@
             value="Finalizar"
             class="btnfinalizar btn btnactive"
             id="btfinalizar" 
-            onclick="Modal.open()"
+            onclick="Modal.openFin(event)"
           />
         </div>
         
       </form>
     </div>
+
+    <div class="modal-aceite">
+      <div class="modal">
+          <div id="from">
+              <h4 id="text-modal">A questão não foi respondida, deseja prosegir?</h4>
+
+              <div class="input-grupo">
+                  <a href="#" onclick="Modal.close()" class="button cancel">Não</a>
+                  <button onclick="Modal.aceite('sim')" class="fimModal">Sim</button>
+                  <button onclick="Modal.finalizar(event)" class="fimModals fimdesativar">Sim</button>
+              </div>
+          </div>
+
+      </div>
+  </div>
+
   </body>
 </html>

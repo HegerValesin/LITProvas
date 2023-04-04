@@ -7,6 +7,7 @@ let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
+let confirma ="";
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -30,12 +31,49 @@ const Modal = {
 
     close() {
         document.querySelector('.modal-aceite').classList.remove('active')
+        currentQuestionIndex = confirma;
     },
 
-    aceite(event) {
-        event.preventDefault();
+    aceite(resp) {
+        if (resp === 'sim') {
+            statusAtual = "Ainda não foi respondida";
+            saveAnswer();
+            showCurrentQuestion()
+            renderQuestion()
+            if (currentQuestionIndex === lengthLocal-1) {
+                nextButton.disabled = true;
+                document.querySelector('.btproximo').classList.add('btnactive');
+                document.querySelector('.btnfinalizar').classList.remove('btnactive')
+            } else {
+                document.querySelector('.btproximo').classList.remove('btnactive');
+                document.querySelector('.btnfinalizar').classList.add('btnactive');
+                nextButton.disabled = false;
+            }
+            if (currentQuestionIndex === 0) {
+                prevButton.disabled = true;
+            }else {
+                prevButton.disabled = false;
+            }
+            
+            setCustomMude(currentQuestionIndex)
+            loadAnswers()
 
-        window.location.href = "../provas/prova.html";
+        } else {
+            return;
+        }
+        document.querySelector('.modal-aceite').classList.remove('active')
+    },
+
+    openFin(){
+        document.querySelector('.modal-aceite').classList.add('active')
+        document.querySelector('.fimModal').classList.add('fimdesativar')
+        document.querySelector('.fimModals').classList.remove('fimdesativar')
+        document.getElementById('text-modal').innerText = "Deseja finalizar sua prova?"
+    },
+
+    finalizar(event) {
+        event.preventDefault();
+        window.location.href = "../finalizar/finalizada.html";
     }
 }
 
@@ -45,16 +83,14 @@ fetch('../../../public/exam.json')
     .then(data => {
         prova = data.exam.id;
         questions = data.exam.questions.question.map(question => question);
-        console.log(questions)
 
        questProva = `quest_${prova}`;
        localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
-   
        if (!localStorageQuestions){
-           if(localStorageQuestions != questProva){
-           localStorage.setItem(questProva, JSON.stringify(questions));
-         }
+            localStorage.clear;
+            localStorage.setItem(questProva, JSON.stringify(questions));
        }
+      
        localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
        lengthLocal = localStorageQuestions.length;
        
@@ -118,45 +154,19 @@ function showCurrentQuestion() {
 
 const bntQuest = {
     muda(btnN) {
-        console.log("agor",btnN)
-
         const btn_AnswerOptions = document.querySelector('#answer-options');
         const btn_quizType = btn_AnswerOptions.querySelector("#type")?.textContent === '0';
         const btnSelectedOption = btn_quizType ? btn_AnswerOptions.querySelector('#answer').value : btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
 
     if (!btnSelectedOption) {
-        var btnconsfirmar = confirm("A questão não foi respondida, deseja prosegir?");
-        if (btnconsfirmar) {
-            statusAtual = "Ainda não foi respondida";
-            saveAnswer();
-            currentQuestionIndex = (btnN - 1);
-            showCurrentQuestion()
-            renderQuestion()
-            if (currentQuestionIndex === lengthLocal-1) {
-                nextButton.disabled = true;
-                document.querySelector('.btproximo').classList.add('btnactive');
-                document.querySelector('.btnfinalizar').classList.remove('btnactive')
-            } else {
-                document.querySelector('.btproximo').classList.remove('btnactive');
-                document.querySelector('.btnfinalizar').classList.add('btnactive');
-                nextButton.disabled = false;
-            }
-            if (currentQuestionIndex === 0) {
-                prevButton.disabled = true;
-            }else {
-                prevButton.disabled = false;
-            }
-            
-            setCustomMude(currentQuestionIndex)
-            loadAnswers()
-
-        } else {
-            return;
-        }
+        confirma = currentQuestionIndex;
+        currentQuestionIndex = (btnN - 1);
+        Modal.open();
+        
     } else {
+        currentQuestionIndex = (btnN - 1);
         statusAtual = "Respondida";
         saveAnswer()
-        currentQuestionIndex = (btnN - 1);
         showCurrentQuestion()
         renderQuestion()
         if (currentQuestionIndex === lengthLocal-1) {
@@ -174,8 +184,6 @@ const bntQuest = {
         setCustomMude(currentQuestionIndex)
         loadAnswers()
     }
-    console.log("proximo btn")
-
     }
 }
 
@@ -197,8 +205,6 @@ function creatButtons() {
 
         cardbutton.appendChild(button);
     };
-
-
 }
 
 // Adiciona o evento de click no botão "Voltar"
@@ -210,22 +216,10 @@ prevButton.addEventListener("click", () => {
     const selectedOption = pb_quizType ? pb_AnswerOptions.querySelector('#answer').value : pb_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
 
     if (!selectedOption) {
-        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
-        if (consfirmar) {
-            statusAtual = "Ainda não foi respondida";
-            saveAnswer();
-            currentQuestionIndex--;
-            showCurrentQuestion();
-            renderQuestion();
-            if (currentQuestionIndex === 0) {
-                prevButton.disabled = true;
-            }
-            document.querySelector('.btproximo').classList.remove('btnactive');
-            document.querySelector('.btnfinalizar').classList.add('btnactive');
-            nextButton.disabled = false;
-            setCustomMude(currentQuestionIndex)
-            loadAnswers()
-        }
+        confirma = currentQuestionIndex;
+        Modal.open();
+        currentQuestionIndex--;
+
     } else {
         statusAtual = "Respondida";
         saveAnswer();
@@ -242,7 +236,6 @@ prevButton.addEventListener("click", () => {
         setCustomMude(currentQuestionIndex)
         loadAnswers()
     }
-    console.log("Voltar")
 });
 
 
@@ -252,34 +245,19 @@ nextButton.addEventListener("click", function () {
     const ael_AnswerOptions = document.querySelector('#answer-options');
     const ael_quizType = ael_AnswerOptions.querySelector("#type")?.textContent === '0';
     const selectedOption = ael_quizType ? ael_AnswerOptions.querySelector('#answer').value : ael_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-
+    
     if (!selectedOption) {
-        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
-        if (consfirmar) {
-            statusAtual = "Ainda não foi respondida";
-            saveAnswer();
-            currentQuestionIndex++;
-            showCurrentQuestion()
-            renderQuestion()
-            if (currentQuestionIndex === questions.length - 1) {
-                nextButton.disabled = true;
-                document.querySelector('.btproximo').classList.add('btnactive');
-                document.querySelector('.btnfinalizar').classList.remove('btnactive')
-            }
-            prevButton.disabled = false;
-            setCustomMude(currentQuestionIndex)
-            loadAnswers()
-
-        } else {
-            return;
-        }
+        confirma = currentQuestionIndex;
+        currentQuestionIndex++;
+        Modal.open();
+     
     } else {
+        currentQuestionIndex++;
         statusAtual = "Respondida";
         saveAnswer()
-        currentQuestionIndex++;
         showCurrentQuestion()
         renderQuestion()
-        if (currentQuestionIndex === questions.length - 1) {
+        if (currentQuestionIndex === lengthLocal - 1) {
             nextButton.disabled = true;
             document.querySelector('.btproximo').classList.add('btnactive');
             document.querySelector('.btnfinalizar').classList.remove('btnactive')
@@ -288,7 +266,6 @@ nextButton.addEventListener("click", function () {
         setCustomMude(currentQuestionIndex);
         loadAnswers()
     }
-    console.log("proximo")
 });
 
 function renderQuestion() {
@@ -297,7 +274,7 @@ function renderQuestion() {
 
     // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
     let getStatus = JSON.parse(localStorage.getItem(prova));
-    const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = localStorageQuestions[currentQuestionIndex];
     let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
     answeredStatusElement.innerText = questionStatus[0].status;
 
@@ -394,6 +371,7 @@ function clearAnswers() {
     }
 }
 
+//coloca no html a resposta que vem do localstorage
 function setAnswer(answers) {
     const sa_AnswerOptions = document.querySelector('#answer-options');
     const sa_quizType = sa_AnswerOptions.querySelector("#type")?.textContent === '0';
@@ -408,7 +386,7 @@ function setAnswer(answers) {
         }
       }
 }
-
+//Insere as resposta no localStorage
 function storage(data) {
     let get = JSON.parse(localStorage.getItem(data.prova));
     let newQuestion = get.filter(item => item.question == data.questao);
