@@ -44,56 +44,32 @@
     </header>
     <section>
       <div class="main-container">
-        <div class="top-container">
+        <div class="top-container"  >
           <!-- Conteúdo da div de cima aqui -->
         </div>
       </div>
     </section>
-      <form class="quadro-quiz">
+      
         <div class="quiz-enun">
           <!--incluir as questões via js-->
-          <div class="pontosquiz">
-            <h3>Questão <span id="current-question">1</span></h3>
-            <div id="answered-status">Ainda não respondida</div>
-            <div id="point-value">
-              Vale <span id="current-points">1,00</span> ponto(s).
-            </div>
-          </div>
-          <div class="quiz">
-            <div class="quiz-formulario">
-              <div class="qtext" id="qtext"></div>
-              <div class="ablock">
-                <div class="prompt active">Escolha uma opção:</div>
-                <div class="answer" id="answer-options">
-               
-                </div>
-              </div>
-            </div>
-          </div>
+          
         </div>
         <div class="submitbtn">
           <input
             type="button"
-            value="Página anterior"
+            value="Voltar a responder"
             class="btanterior btn"
             id="previousbutton"
           />
           <input
             type="button"
-            value="Próxima página"
-            class="btproximo btn"
-            id="nextbutton"
-          />
-          <input
-            type="button"
-            value="Finalizar"
-            class="btnfinalizar btn btnactive"
+            value="Enviar Resposta"
+            class="btnfinalizar btn "
             id="btfinalizar" 
             onclick="Modal.openFin(event)"
           />
         </div>
-        
-      </form>
+ 
     </div>
 
     <div class="modal-aceite">

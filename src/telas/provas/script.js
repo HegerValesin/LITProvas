@@ -1,13 +1,13 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
-var localStorageQuestions = [];
 var lengthLocal;
-let prova = "";
+let prova = JSON.parse(localStorage.getItem('prova'));;
 let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
 let confirma ="";
+var localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));;
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -24,7 +24,7 @@ const answeredStatusElement = document.getElementById('answered-status');
 const currentPointsElement = document.getElementById('current-points');
 const previousButton = document.getElementById("previousbutton");
 
-const Modal = {
+const Modalprova = {
     open() {
         document.querySelector('.modal-aceite').classList.add('active')
     },
@@ -39,7 +39,6 @@ const Modal = {
             statusAtual = "Ainda não foi respondida";
             saveAnswer();
             showCurrentQuestion()
-            renderQuestion()
             if (currentQuestionIndex === lengthLocal-1) {
                 nextButton.disabled = true;
                 document.querySelector('.btproximo').classList.add('btnactive');
@@ -50,13 +49,12 @@ const Modal = {
                 nextButton.disabled = false;
             }
             if (currentQuestionIndex === 0) {
-                prevButton.disabled = true;
+                previousButton.disabled = true;
             }else {
-                prevButton.disabled = false;
+                previousButton.disabled = false;
             }
-            
             setCustomMude(currentQuestionIndex)
-            loadAnswers()
+           // loadAnswers()
 
         } else {
             return;
@@ -69,6 +67,7 @@ const Modal = {
         document.querySelector('.fimModal').classList.add('fimdesativar')
         document.querySelector('.fimModals').classList.remove('fimdesativar')
         document.getElementById('text-modal').innerText = "Deseja finalizar sua prova?"
+        saveAnswer()
     },
 
     finalizar(event) {
@@ -77,49 +76,15 @@ const Modal = {
     }
 }
 
-// Carrega as perguntas do arquivo exam.json
-fetch('../../../public/exam.json')
-    .then(response => response.json())
-    .then(data => {
-        prova = data.exam.id;
-        questions = data.exam.questions.question.map(question => question);
-
-       questProva = `quest_${prova}`;
-       localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
-       if (!localStorageQuestions){
-            localStorage.clear;
-            localStorage.setItem(questProva, JSON.stringify(questions));
-       }
-      
-       localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
-       lengthLocal = localStorageQuestions.length;
-       
-       criarstorage();
-       creatButtons();
-       showCurrentQuestion();
-       loadAnswers();
-       renderQuestion();
-    });
-
-function criarstorage(){
-       
-        let get = JSON.parse(localStorage.getItem(prova));
-        if (!get){
-            let getnew = [];
-            for(i = 0; i < localStorageQuestions.length; i++){
-                getnew.push({question: localStorageQuestions[i].questionOrder, alternative: "", status: "Ainda não Respondida"});
-            }
-            localStorage.setItem(`${prova}`, JSON.stringify(getnew));
-        }
-}
+creatButtons();
+showCurrentQuestion();
 
 // Mostra a pergunta atual
 function showCurrentQuestion() {
-   
-    localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));
+
     // Obter a pergunta atual
     const currentQuestion = localStorageQuestions[currentQuestionIndex];
-
+    lengthLocal = localStorageQuestions.length;
     // Renderiza o título da questão
     questionTextElement.innerHTML = `${currentQuestion.statement}`;
 
@@ -147,9 +112,10 @@ function showCurrentQuestion() {
         }
     }
     if (currentQuestionIndex === 0) {
-        prevButton.disabled = true;
+        previousButton.disabled = true;
     }
     setCustomMude(currentQuestionIndex);
+    renderQuestion()
 }
 
 const bntQuest = {
@@ -157,18 +123,17 @@ const bntQuest = {
         const btn_AnswerOptions = document.querySelector('#answer-options');
         const btn_quizType = btn_AnswerOptions.querySelector("#type")?.textContent === '0';
         const btnSelectedOption = btn_quizType ? btn_AnswerOptions.querySelector('#answer').value : btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-
     if (!btnSelectedOption) {
         confirma = currentQuestionIndex;
         currentQuestionIndex = (btnN - 1);
-        Modal.open();
+        Modalprova.open();
         
     } else {
         currentQuestionIndex = (btnN - 1);
         statusAtual = "Respondida";
         saveAnswer()
         showCurrentQuestion()
-        renderQuestion()
+       // renderQuestion()
         if (currentQuestionIndex === lengthLocal-1) {
             nextButton.disabled = true;
             document.querySelector('.btproximo').classList.add('btnactive');
@@ -176,10 +141,10 @@ const bntQuest = {
         } else {
             document.querySelector('.btproximo').classList.remove('btnactive');
             document.querySelector('.btnfinalizar').classList.add('btnactive');
-            prevButton.disabled = false;
+            previousButton.disabled = false;
         }
         if (currentQuestionIndex === 0) {
-            prevButton.disabled = true;
+            previousButton.disabled = true;
         }
         setCustomMude(currentQuestionIndex)
         loadAnswers()
@@ -208,8 +173,8 @@ function creatButtons() {
 }
 
 // Adiciona o evento de click no botão "Voltar"
-const prevButton = document.querySelector('#previousbutton');
-prevButton.addEventListener("click", () => {
+
+previousButton.addEventListener("click", () => {
 
     const pb_AnswerOptions = document.querySelector('#answer-options');
     const pb_quizType = pb_AnswerOptions.querySelector("#type")?.textContent === '0';
@@ -217,7 +182,7 @@ prevButton.addEventListener("click", () => {
 
     if (!selectedOption) {
         confirma = currentQuestionIndex;
-        Modal.open();
+        Modalprova.open();
         currentQuestionIndex--;
 
     } else {
@@ -227,7 +192,7 @@ prevButton.addEventListener("click", () => {
         showCurrentQuestion();
         renderQuestion();
         if (currentQuestionIndex === 0) {
-            prevButton.disabled = true;
+            previousButton.disabled = true;
         }
 
         document.querySelector('.btproximo').classList.remove('btnactive');
@@ -249,22 +214,22 @@ nextButton.addEventListener("click", function () {
     if (!selectedOption) {
         confirma = currentQuestionIndex;
         currentQuestionIndex++;
-        Modal.open();
+        Modalprova.open();
      
     } else {
         currentQuestionIndex++;
         statusAtual = "Respondida";
         saveAnswer()
         showCurrentQuestion()
-        renderQuestion()
+        
         if (currentQuestionIndex === lengthLocal - 1) {
             nextButton.disabled = true;
             document.querySelector('.btproximo').classList.add('btnactive');
             document.querySelector('.btnfinalizar').classList.remove('btnactive')
         }
-        prevButton.disabled = false;
         setCustomMude(currentQuestionIndex);
         loadAnswers()
+        previousButton.disabled = false;
     }
 });
 
@@ -273,9 +238,10 @@ function renderQuestion() {
     currentQuestionNumberElement.innerText = `${currentQuestionIndex + 1}`;
 
     // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
-    let getStatus = JSON.parse(localStorage.getItem(prova));
+    let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
     const currentQuestion = localStorageQuestions[currentQuestionIndex];
     let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
+
     answeredStatusElement.innerText = questionStatus[0].status;
 
     // Atualiza a pontuação atual (se houver)
@@ -284,6 +250,7 @@ function renderQuestion() {
     } else {
         currentPointsElement.innerText = '';
     }
+    loadAnswers();
 }
 
 //botões de questões
@@ -291,7 +258,7 @@ function setCustomMude(contIndex) {
     var btafter = contIndex + 1;
     var btBeforeIndex = 0;
     var btActive = document.getElementById(`btn-${btafter}`);
-    const cards = JSON.parse(localStorage.getItem(prova));
+    const cards = JSON.parse(localStorage.getItem('res_'+prova));
 
     // Adiciona um evento de clique em cada card
     cards.forEach((card, index) => {
@@ -311,21 +278,10 @@ function setCustomMude(contIndex) {
         btBefore.classList.remove("bt-quiz-active")
     };
     });
-
-
     if (btActive) {
         btActive.classList.add("bt-quiz-active");
     }
-   /* if (btBefore) {
-        if(statusAtual=="Respondida"){
-            btBefore.classList.add("bt-quiz-x")
-            btBefore.classList.remove("bt-quiz-active")
-            btBefore.classList.remove("bt-quiz-y")
-        } else{
-            btBefore.classList.add("bt-quiz-y")
-            btBefore.classList.remove("bt-quiz-active")
-        }
-    }*/
+
 }
 
 // Salvando os dados da resposta no localStorage
@@ -352,8 +308,7 @@ function saveAnswer() {
 // Carregando os dados das respostas do localStorage
 function loadAnswers() {
     let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
-    let get = JSON.parse(localStorage.getItem(prova));
-
+    let get = JSON.parse(localStorage.getItem('res_'+prova));
     if (get){
     let respostaSalva = get.filter(item => item.question == numeroQuestion);
 
@@ -373,11 +328,11 @@ function clearAnswers() {
 
 //coloca no html a resposta que vem do localstorage
 function setAnswer(answers) {
-    const sa_AnswerOptions = document.querySelector('#answer-options');
+    var sa_AnswerOptions = document.querySelector('#answer-options');
     const sa_quizType = sa_AnswerOptions.querySelector("#type")?.textContent === '0';
     const sa_SelectedOption = sa_quizType ? sa_AnswerOptions.querySelector('#answer') : sa_AnswerOptions.querySelector('input[name="answer"]:checked');
     if (sa_SelectedOption) {
-        sa_AnswerOptions.querySelector('#answer').value = answers;;
+        sa_AnswerOptions.querySelector('#answer').value = answers;
     }else {
         // Resposta de múltipla escolha
         const answerRadio = sa_AnswerOptions.querySelector(`input[value="${parseInt(answers)}"]`);
@@ -388,7 +343,7 @@ function setAnswer(answers) {
 }
 //Insere as resposta no localStorage
 function storage(data) {
-    let get = JSON.parse(localStorage.getItem(data.prova));
+    let get = JSON.parse(localStorage.getItem('res_'+data.prova));
     let newQuestion = get.filter(item => item.question == data.questao);
 
     if (newQuestion.length != 0){
@@ -398,9 +353,9 @@ function storage(data) {
             }
             return {question: items.question, alternative: items.alternative, status: items.status}
         })
-        localStorage.setItem(`${data.prova}`, JSON.stringify(storagequest));
+        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(storagequest));
     }else {
         get.push({question: data.questao, alternative: data.resposta, status: data.status});
-        localStorage.setItem(`${data.prova}`, JSON.stringify(get));
+        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(get));
     }
 }

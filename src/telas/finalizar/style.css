@@ -38,7 +38,6 @@ html {
 }
 
 body {
-  height: 100vh;
 
   font-family: -apple-system, blinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica", Arial, sans-serif, "Apple Color Emoj", "Segoe UI Emoji",
@@ -171,9 +170,15 @@ header .header-bg .users a img {
   width: 100%;
   height: fit-content;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
+.geral {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+}
 .pontosquiz {
   float: left;
   width: 7em;
@@ -251,40 +256,18 @@ header .header-bg .users a img {
   display: block;
 }
 
-.r0 {
+.altFinal {
   padding: 0.3em 0.3em 0.3em 25px;
-  text-indent: -25px;
-
+  text-indent: 4px;
+  display: flex;
 }
-.r0 input {
+.altFinal input {
   margin-right: 5px;
 }
 
-.r0 input[type="radio"],
-.r0 label {
+.altFinal input[type="radio"],
+.altFinal label {
   display: inline-block;
-}
-
-.r0 label p {
-  margin-left: 1.5em;
-}
-
-.r1 {
-  padding: 0.3em 0.3em 0.3em 25px;
-  text-indent: -25px;
-
-}
-.r1 input {
-  margin-right: 5px;
-}
-
-.r1 input[type="radio"],
-.r1 label {
-  display: inline-block;
-}
-
-.r1 label p {
-  margin-left: 1.5em;
 }
 
 .quadrados {
@@ -351,7 +334,7 @@ textarea {
   display: flex;
   justify-content: space-between;
 
-  margin: 0 1.5em 1em 1.5em;
+  margin: 0 2em 2em 2em;
 }
 
 .btanterior {

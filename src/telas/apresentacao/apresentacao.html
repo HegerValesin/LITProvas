@@ -1,63 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>LIT Provas - Unichristus</title>
-    <link rel="shortcut icon" href="../../../public/img/favicon.ico" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="../../../public/img/favicon.ico"
+      type="image/x-icon"
+    />
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 
     <script src="../../../public/js/script.js" defer></script>
     <script src="script.js" defer></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <div class="header-bg">
-            <div class="logo">
-                <img src="../../../public/img/LogoU.png" alt="Simbolo da Unichristus">
-                <label> Ambiente de Provas </label>
-            </div>
-            <div class="ambiente">
-
-            </div>
-            <div class="users">
-                <label id="username">Heger Valesin</label>
-                <img class="userimg" src="../../../public/img/avatar.png" alt="Foto do usuario">
-                <a href="../../../index.html">Sair <img src="../../../public/img/sair.png" alt="" srcset=""></a>
-            </div>
+      <div class="header-bg">
+        <div class="logo">
+          <img
+            src="../../../public/img/LogoU.png"
+            alt="Simbolo da Unichristus"
+          />
+          <label> Ambiente de Provas </label>
         </div>
+        <div class="ambiente"></div>
+        <div class="users">
+          <label id="username">Heger Valesin</label>
+          <img
+            class="userimg"
+            src="../../../public/img/avatar.png"
+            alt="Foto do usuario"
+          />
+          <a href="../../../index.html">Sair 
+            <img src="../../../public/img/sair.png" alt="" srcset=""/>
+          </a>
+        </div>
+      </div>
     </header>
     <section>
-        <div class="main-container">
-            <div class="top-container">
-                <!-- Conteúdo da div de cima aqui -->
-
-            </div>
-            <div class="bottom-container">
-                <!-- Conteúdo da div de baixo aqui -->
-
-            </div>
+      <div class="main-container">
+        <div class="top-container">
+          <!-- Conteúdo da div de cima aqui -->
         </div>
+        <div class="bottom-container">
+          <!-- Conteúdo da div de baixo aqui -->
+        </div>
+      </div>
     </section>
 
     <div class="modal-aceite">
-        <div class="modal">
-            <div id="from">
-                <h4>Você confirma os termos para iniciar a prova?</h4>
+      <div class="modal">
+        <div id="from">
+          <h4>Você confirma os termos para iniciar a prova?</h4>
 
-                <div class="input-grupo">
-                    <a href="#" onclick="Modal.close()" class="button cancel">Cancelar</a>
-                    <button onclick="Modal.aceite(event)">Aceito</button>
-                </div>
-            </div>
-
+          <div class="input-grupo">
+            <a href="#" onclick="ModalAp.close()" class="button cancel"
+              >Cancelar</a
+            >
+            <button onclick="ModalAp.aceite(event)">Aceito</button>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
