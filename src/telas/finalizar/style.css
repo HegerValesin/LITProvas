@@ -371,6 +371,17 @@ textarea {
   opacity: 1;
 }
 
+.resalt {
+  border-width: 0.25rem;
+  border-style: solid;
+  border-color: white;
+
+  margin-top: 10px;
+  padding: 0.25rem;
+}
+.resalt p {
+  margin: 0 10px 0 10px;
+}
 /*-----Modal-----*/
 
 .modal-aceite {

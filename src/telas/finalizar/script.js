@@ -51,7 +51,7 @@ console.log(respostaQuest)
     }else {
       alternativesHTML += `
       <div id="type" style="display:none;">0</div>
-      <p style="background-color: white">${respostaQuest[i].alternative}</p>
+      <div class="resalt"><p >${respostaQuest[i].alternative}</p></div>
       `
     }
       // Adicionar o HTML das alternativas à string de HTML da questão
