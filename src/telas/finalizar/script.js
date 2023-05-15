@@ -85,16 +85,31 @@ console.log(respostaQuest)
 
     questaoProva.innerHTML += questionStorage
 
+const ModalFim = {
+      open() {
+          document.querySelector('.modal-aceite').classList.add('active')
+      },
+  
+      close() {
+          document.querySelector('.modal-aceite').classList.remove('active')
+      },
+  
+      aceite() {
+        document.querySelector('.modal-aceite').classList.remove('active')
+        document.querySelector('.modal-aceite-envia').classList.add('active')
+      },
 
-/*   
-<div class="quiz">
-        <div class="quiz-formulario">
-          <div class="qtext" id="qtext"></div>
-          <div class="ablock">
-            <div class="prompt active">Escolha uma opção:</div>
-            <div class="answer" id="answer-options">
-           
-            </div>
-          </div>
-        </div>
-    </div>*/
+      retorna(event){
+        event.preventDefault();
+
+        window.location.href = "../provas/prova.html"; 
+      },
+      enviada(event){
+        event.preventDefault();
+        document.querySelector('.modal-aceite-envia').classList.remove('active')
+        localStorage.clear();
+        localStorage.clear();
+        window.location.href = "../../../index.html"; 
+      }
+  
+  }

@@ -96,6 +96,7 @@ function showCurrentQuestion() {
     if (currentQuestion.type === 0) {
         document.querySelector('.prompt').classList.remove('active')
         answerOptionsElement.innerHTML = `<div id="type" style="display:none;">0</div><textarea id="answer" class="subjetiva" rows="15" cols="60"></textarea>`;
+        newCkeditor(answer, 200);
     } else if (currentQuestion.type === 1) {
 
         for (let i = 0; i < currentQuestion.alternatives.alternative.length; i++) {
@@ -330,9 +331,10 @@ function clearAnswers() {
 function setAnswer(answers) {
     var sa_AnswerOptions = document.querySelector('#answer-options');
     const sa_quizType = sa_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const sa_SelectedOption = sa_quizType ? sa_AnswerOptions.querySelector('#answer') : sa_AnswerOptions.querySelector('input[name="answer"]:checked');
+    const sa_SelectedOption = sa_quizType ? sa_AnswerOptions.querySelector('cke_editable') : sa_AnswerOptions.querySelector('input[name="answer"]:checked');
+    console.log(sa_SelectedOption);
     if (sa_SelectedOption) {
-        sa_AnswerOptions.querySelector('#answer').value = answers;
+        sa_AnswerOptions.querySelector('cke_editable').value = answers;
     }else {
         // Resposta de múltipla escolha
         const answerRadio = sa_AnswerOptions.querySelector(`input[value="${parseInt(answers)}"]`);
@@ -358,4 +360,57 @@ function storage(data) {
         get.push({question: data.questao, alternative: data.resposta, status: data.status});
         localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(get));
     }
+}
+
+
+function newCkeditor(id,height){
+    return CKEDITOR.replace(id, {
+        height: height,
+        extraPlugins: 'uploadimage,image2, filebrowser, imageresize, mathjax, leaui_formula, liststyle, custom_list_styles_alpha, custom_list_styles_roman, justify',
+        removePlugins: 'easyimage, cloudservices, image',
+        mathJaxLib: '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        toolbar : [
+            { name: 'document', items: [ 'Source'] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+            { name: 'editing', items: [ 'Scayt' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'paragraph', items: [
+                'NumberedList', 'BulletedList',
+                '-', 'Mathjax', 'LeauiFormula',
+                '-',
+                    { name: 'ListTypeAlpha', items: ['custom_list_styles_alpha'], label: 'Change List Type', command: 'changeListTypeAlpha'},
+                    { name: 'ListTypeRoman', items: ['custom_list_styles_roman'], label: 'Change List Type', command: 'changeListTypeRoman'},
+                '-', 'Outdent', 'Indent',
+                '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                '-', 'BidiLtr', 'BidiRtl' ]
+            },
+            { name: 'insert', items: [  'Image' , 'Table' ,'Smiley', 'SpecialChar'] },
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] }
+        ],
+        
+         stylesSet: [{
+              name: 'Narrow image',
+              type: 'widget',
+              widget: 'image',
+              attributes: {
+                'class': 'image-narrow'
+              }
+            },
+            {
+              name: 'Wide image',
+              type: 'widget',
+              widget: 'image',
+              attributes: {
+                'class': 'image-wide'
+              }
+            }
+          ],
+
+          image2_alignClasses: ['image-align-left', 'image-align-center', 'image-align-right'],
+          image2_disableResizer: true,
+          removeButtons: 'PasteFromWord,Save,TextField,Textarea,Select,Button,ImageButton,HiddenField,CreatePlaceholder,Flash,SpecialChar,PageBreak,Iframe,About,Smiley,Form,Checkbox,Radio,Textarea,TextField',
+            removeDialogTabs: 'image:advanced;link:advanced',
+            entities_processNumerical : true,
+    });		
 }

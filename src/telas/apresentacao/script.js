@@ -30,7 +30,7 @@ fetch('../../../public/exam.json')
     var localStorageprova = JSON.parse(localStorage.getItem("prova"));
     let questions = data.exam.questions.question.map(question => question);
     if(exam.id != localStorageprova) {
-        localStorage.clear;
+        localStorage.clear();
         localStorage.setItem('prova', JSON.stringify(exam.id));
         localStorage.setItem(`quest_${exam.id}`, JSON.stringify(questions));
     }
