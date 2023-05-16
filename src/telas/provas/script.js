@@ -1,13 +1,15 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
 var lengthLocal;
-let prova = JSON.parse(localStorage.getItem('prova'));;
+const prova = JSON.parse(localStorage.getItem('prova'));;
 let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
 let confirma ="";
-var localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));;
+var localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));
+var ultQuest;
+var btnSelectedOption;
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -27,11 +29,19 @@ const previousButton = document.getElementById("previousbutton");
 const Modalprova = {
     open() {
         document.querySelector('.modal-aceite').classList.add('active')
+        ultQuest = false;
     },
 
     close() {
         document.querySelector('.modal-aceite').classList.remove('active')
-        currentQuestionIndex = confirma;
+        console.log('confirma close',confirma,' index close ',currentQuestionIndex)
+        if(ultQuest){
+            console.log('pasou')
+            showCurrentQuestion();
+        }else {
+            currentQuestionIndex = confirma;
+            console.log('confirma closeElse',confirma,' index close ',currentQuestionIndex)
+        };
     },
 
     aceite(resp) {
@@ -67,7 +77,7 @@ const Modalprova = {
         document.querySelector('.fimModal').classList.add('fimdesativar')
         document.querySelector('.fimModals').classList.remove('fimdesativar')
         document.getElementById('text-modal').innerText = "Deseja finalizar sua prova?"
-        saveAnswer()
+        type(currentQuestionIndex);
     },
 
     finalizar(event) {
@@ -81,7 +91,6 @@ showCurrentQuestion();
 
 // Mostra a pergunta atual
 function showCurrentQuestion() {
-
     // Obter a pergunta atual
     const currentQuestion = localStorageQuestions[currentQuestionIndex];
     lengthLocal = localStorageQuestions.length;
@@ -121,35 +130,8 @@ function showCurrentQuestion() {
 
 const bntQuest = {
     muda(btnN) {
-        const btn_AnswerOptions = document.querySelector('#answer-options');
-        const btn_quizType = btn_AnswerOptions.querySelector("#type")?.textContent === '0';
-        const btnSelectedOption = btn_quizType ? btn_AnswerOptions.querySelector('#answer').value : btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-    if (!btnSelectedOption) {
         confirma = currentQuestionIndex;
-        currentQuestionIndex = (btnN - 1);
-        Modalprova.open();
-        
-    } else {
-        currentQuestionIndex = (btnN - 1);
-        statusAtual = "Respondida";
-        saveAnswer()
-        showCurrentQuestion()
-       // renderQuestion()
-        if (currentQuestionIndex === lengthLocal-1) {
-            nextButton.disabled = true;
-            document.querySelector('.btproximo').classList.add('btnactive');
-            document.querySelector('.btnfinalizar').classList.remove('btnactive')
-        } else {
-            document.querySelector('.btproximo').classList.remove('btnactive');
-            document.querySelector('.btnfinalizar').classList.add('btnactive');
-            previousButton.disabled = false;
-        }
-        if (currentQuestionIndex === 0) {
-            previousButton.disabled = true;
-        }
-        setCustomMude(currentQuestionIndex)
-        loadAnswers()
-    }
+       type(--btnN)
     }
 }
 
@@ -176,62 +158,15 @@ function creatButtons() {
 // Adiciona o evento de click no botão "Voltar"
 
 previousButton.addEventListener("click", () => {
-
-    const pb_AnswerOptions = document.querySelector('#answer-options');
-    const pb_quizType = pb_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const selectedOption = pb_quizType ? pb_AnswerOptions.querySelector('#answer').value : pb_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-
-    if (!selectedOption) {
-        confirma = currentQuestionIndex;
-        Modalprova.open();
-        currentQuestionIndex--;
-
-    } else {
-        statusAtual = "Respondida";
-        saveAnswer();
-        currentQuestionIndex--;
-        showCurrentQuestion();
-        renderQuestion();
-        if (currentQuestionIndex === 0) {
-            previousButton.disabled = true;
-        }
-
-        document.querySelector('.btproximo').classList.remove('btnactive');
-        document.querySelector('.btnfinalizar').classList.add('btnactive');
-        nextButton.disabled = false;
-        setCustomMude(currentQuestionIndex)
-        loadAnswers()
-    }
-});
+    confirma = currentQuestionIndex;
+    type(--currentQuestionIndex);
+  });
 
 
 // Adiciona o evento de click no botão "Proximo"
 nextButton.addEventListener("click", function () {
-
-    const ael_AnswerOptions = document.querySelector('#answer-options');
-    const ael_quizType = ael_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const selectedOption = ael_quizType ? ael_AnswerOptions.querySelector('#answer').value : ael_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-    
-    if (!selectedOption) {
-        confirma = currentQuestionIndex;
-        currentQuestionIndex++;
-        Modalprova.open();
-     
-    } else {
-        currentQuestionIndex++;
-        statusAtual = "Respondida";
-        saveAnswer()
-        showCurrentQuestion()
-        
-        if (currentQuestionIndex === lengthLocal - 1) {
-            nextButton.disabled = true;
-            document.querySelector('.btproximo').classList.add('btnactive');
-            document.querySelector('.btnfinalizar').classList.remove('btnactive')
-        }
-        setCustomMude(currentQuestionIndex);
-        loadAnswers()
-        previousButton.disabled = false;
-    }
+    confirma = currentQuestionIndex;
+    type(++currentQuestionIndex);
 });
 
 function renderQuestion() {
@@ -286,24 +221,38 @@ function setCustomMude(contIndex) {
 }
 
 // Salvando os dados da resposta no localStorage
-function saveAnswer() {
+function saveAnswer(resp, typeQ) {
+    console.log('resp1',resp);
     const answerOptions = document.querySelector('#answer-options');
-    const quizType = answerOptions.querySelector("#type")?.textContent === '0';
-    let answer = quizType ? answerOptions.querySelector('#answer').value : answerOptions.querySelector('input[name="answer"]:checked')?.value;
+    let answer;
+    let type = false;
+    if(answerOptions.querySelector("#type")?.textContent === '0'){
+        //answer = CKEDITOR.instances.answer.getData();
+        ultQuest=true
+       type = true;
+    } else {
+       // answer = answerOptions.querySelector('input[name="answer"]:checked')?.value;
+    };
     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    if(answer === undefined) {
+    console.log('currentQuestion',currentQuestion)
+    if(resp === undefined) {
+        console.log('resposta',answer);
         answer = "";
+    }else {
+        console.log('resposta',answer);
+        answer = resp;
     }
-
     let data = {
         prova: prova,
         questao: currentQuestion,
         resposta: answer,
-        status:  statusAtual
+        status:  statusAtual,
+        type: type
     }
     storage(data);
+    
 }
 
 // Carregando os dados das respostas do localStorage
@@ -330,18 +279,16 @@ function clearAnswers() {
 //coloca no html a resposta que vem do localstorage
 function setAnswer(answers) {
     var sa_AnswerOptions = document.querySelector('#answer-options');
-    const sa_quizType = sa_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const sa_SelectedOption = sa_quizType ? sa_AnswerOptions.querySelector('cke_editable') : sa_AnswerOptions.querySelector('input[name="answer"]:checked');
-    console.log(sa_SelectedOption);
-    if (sa_SelectedOption) {
-        sa_AnswerOptions.querySelector('cke_editable').value = answers;
-    }else {
+   if(sa_AnswerOptions.querySelector("#type")?.textContent === '0'){
+        CKEDITOR.instances.answer.setData(answers);
+   }else {
         // Resposta de múltipla escolha
         const answerRadio = sa_AnswerOptions.querySelector(`input[value="${parseInt(answers)}"]`);
         if (answerRadio) {
-          answerRadio.checked = true;
+        answerRadio.checked = true;
         }
-      }
+   };
+   
 }
 //Insere as resposta no localStorage
 function storage(data) {
@@ -360,9 +307,51 @@ function storage(data) {
         get.push({question: data.questao, alternative: data.resposta, status: data.status});
         localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(get));
     }
+    if (data.type){
+        CKEDITOR.instances['answer'].destroy(true);
+    }
 }
 
+//verifica se a função é dicertativa ou multipla escolha
+function type(index){
+    console.log('inicial',index)
+    const btn_AnswerOptions = document.querySelector('#answer-options');
+    
+    if(btn_AnswerOptions.querySelector("#type")?.textContent === '0'){
+        btnSelectedOption = CKEDITOR.instances.answer.getData()
+    }else {
+        btnSelectedOption = btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
+    };
 
+    if (!btnSelectedOption) {
+        currentQuestionIndex = (index);
+        Modalprova.open();
+    } else {
+        currentQuestionIndex = (index);
+        statusAtual = "Respondida";
+        saveAnswer(btnSelectedOption)
+        showCurrentQuestion()
+        if (currentQuestionIndex === lengthLocal-1) {
+            document.querySelector('.btproximo').classList.add('btnactive');
+            document.querySelector('.btnfinalizar').classList.remove('btnactive')
+            nextButton.disabled = true;
+            previousButton.disabled = false;
+        } else {
+            document.querySelector('.btproximo').classList.remove('btnactive');
+            document.querySelector('.btnfinalizar').classList.add('btnactive');
+            previousButton.disabled = false;
+            nextButton.disabled = false;
+        }
+        if (currentQuestionIndex === 0) {
+            previousButton.disabled = true;
+            nextButton.disabled = false;
+        }
+        setCustomMude(currentQuestionIndex)
+        loadAnswers()
+    }
+}
+
+//criação do CKEDITO no textarea
 function newCkeditor(id,height){
     return CKEDITOR.replace(id, {
         height: height,

@@ -2,7 +2,6 @@
 var prova = JSON.parse(localStorage.getItem('prova'));
 var localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));
 let respostaQuest = JSON.parse(localStorage.getItem(`res_${prova}`));
-console.log(respostaQuest)
 //localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
 
 
@@ -23,7 +22,6 @@ console.log(respostaQuest)
         if (respostaQuest[i].alternative != ''){
          
           if ((respostaQuest[i].alternative -1) === j){
-            console.log("REsposta igual",(respostaQuest[i].alternative -1), j)
             alternativesHTML += `
             <label class="altFinal" >
               <input type="radio"  checked  value="${localStorageQuestions[i].alternatives.alternative[j].alternativeOrder}">
@@ -31,7 +29,6 @@ console.log(respostaQuest)
             </label>
           `;
           }else {
-            console.log("REsposta não",(respostaQuest[i].alternative -1), j)
             alternativesHTML += `
             <label class="altFinal" >
               <input type="radio" disabled="true" value="${localStorageQuestions[i].alternatives.alternative[j].alternativeOrder}">
