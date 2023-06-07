@@ -7,7 +7,7 @@ let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
 let confirma ="";
-var localStorageQuestions = JSON.parse(localStorage.getItem(`quest_${prova}`));
+var localStorageQuestions = localStorage;
 var ultQuest;
 var btnSelectedOption;
 
@@ -29,19 +29,11 @@ const previousButton = document.getElementById("previousbutton");
 const Modalprova = {
     open() {
         document.querySelector('.modal-aceite').classList.add('active')
-        ultQuest = false;
     },
 
     close() {
         document.querySelector('.modal-aceite').classList.remove('active')
-        console.log('confirma close',confirma,' index close ',currentQuestionIndex)
-        if(ultQuest){
-            console.log('pasou')
-            showCurrentQuestion();
-        }else {
-            currentQuestionIndex = confirma;
-            console.log('confirma closeElse',confirma,' index close ',currentQuestionIndex)
-        };
+        currentQuestionIndex = confirma;
     },
 
     aceite(resp) {
@@ -71,12 +63,13 @@ const Modalprova = {
         }
         document.querySelector('.modal-aceite').classList.remove('active')
     },
+    closeFim(){
+        document.querySelector('.modalaceitefim').classList.remove('activefim')
+        showCurrentQuestion();
+    },
 
-    openFin(){
-        document.querySelector('.modal-aceite').classList.add('active')
-        document.querySelector('.fimModal').classList.add('fimdesativar')
-        document.querySelector('.fimModals').classList.remove('fimdesativar')
-        document.getElementById('text-modal').innerText = "Deseja finalizar sua prova?"
+    openFim(){
+        document.querySelector('.modalaceitefim').classList.add('activefim')
         type(currentQuestionIndex);
     },
 
@@ -92,7 +85,7 @@ showCurrentQuestion();
 // Mostra a pergunta atual
 function showCurrentQuestion() {
     // Obter a pergunta atual
-    const currentQuestion = localStorageQuestions[currentQuestionIndex];
+    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
     lengthLocal = localStorageQuestions.length;
     // Renderiza o título da questão
     questionTextElement.innerHTML = `${currentQuestion.statement}`;
@@ -138,8 +131,17 @@ const bntQuest = {
 //crias os botões e tbm verifca se esta respondido ou não.
 function creatButtons() {
     var cardbutton = document.getElementById("card-text");
+
+    let contagem = 0;
+    for(var c = 0; c < localStorageQuestions.length; c++){
+        if(localStorage.key(c) === 'prova' || localStorage.key(c) == `res_${prova}`){
+            contagem = ++contagem;
+            console.log(contagem)
+        } 
+    }
     
-    for (var i = 0; i < localStorageQuestions.length; i++) {
+    for (var i = 0; i < contagem; i++) {
+        
         var button = document.createElement("button");
         button.id = "btn-" + (i + 1);
         button.className = "bt-quiz";
@@ -152,7 +154,7 @@ function creatButtons() {
           })(i + 1);
 
         cardbutton.appendChild(button);
-    };
+        };
 }
 
 // Adiciona o evento de click no botão "Voltar"
@@ -175,10 +177,10 @@ function renderQuestion() {
 
     // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
     let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
-    const currentQuestion = localStorageQuestions[currentQuestionIndex];
+    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
     let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
 
-    answeredStatusElement.innerText = questionStatus[0].status;
+    answeredStatusElement.innerText = questionStatus.status;
 
     // Atualiza a pontuação atual (se houver)
     if (currentQuestion.points !== undefined) {
@@ -263,7 +265,7 @@ function loadAnswers() {
     let respostaSalva = get.filter(item => item.question == numeroQuestion);
 
     if (respostaSalva) { // se houver uma resposta salva
-        setAnswer(respostaSalva[0].alternative); // preencher a resposta da questão anterior com a resposta salva
+        setAnswer(respostaSalva.alternative); // preencher a resposta da questão anterior com a resposta salva
     }
 }
 }

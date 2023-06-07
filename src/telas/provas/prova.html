@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="style.css" />
 
     <script src="../../../public/js/script.js" defer></script>
+    <script src="../../routes.js" defer></script>
     <script src="script.js" defer></script>
   </head>
 
@@ -95,7 +96,7 @@
             value="Finalizar"
             class="btnfinalizar btn btnactive"
             id="btfinalizar" 
-            onclick="Modalprova.openFin(event)"
+            onclick="Modalprova.openFim()"
           />
         </div>
         
@@ -110,10 +111,21 @@
               <div class="input-grupo">
                   <a href="#" onclick="Modalprova.close()" class="button cancel">Não</a>
                   <button onclick="Modalprova.aceite('sim')" class="fimModal">Sim</button>
-                  <button onclick="Modalprova.finalizar(event)" class="fimModals fimdesativar">Sim</button>
               </div>
           </div>
 
+      </div>
+  </div>
+  <div class="modalaceitefim">
+      <div class="modalfim">
+          <div id="from">
+              <h4 id="textmodalfim">Deseja finalizar sua prova?</h4>
+
+              <div class="inputgrupofim">
+                  <a href="#" onclick="Modalprova.closeFim()" class="button cancel">Não</a>
+                  <button onclick="Modalprova.finalizar(event)" class="fimModalsfim fimdesativarfim">Sim</button>
+              </div>
+          </div>
       </div>
   </div>
   <script src="../../../public/js/ckeditor/ckeditor.js"></script>
