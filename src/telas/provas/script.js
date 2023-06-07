@@ -1,9 +1,15 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
-let prova = "";
+var lengthLocal;
+const prova = JSON.parse(localStorage.getItem('prova'));;
+let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
+let confirma ="";
+var localStorageQuestions = localStorage;
+var ultQuest;
+var btnSelectedOption;
 
 // Índice da pergunta atual
 let currentQuestionIndex = 0;
@@ -20,55 +26,67 @@ const answeredStatusElement = document.getElementById('answered-status');
 const currentPointsElement = document.getElementById('current-points');
 const previousButton = document.getElementById("previousbutton");
 
-const Modal = {
+const Modalprova = {
     open() {
         document.querySelector('.modal-aceite').classList.add('active')
     },
 
     close() {
         document.querySelector('.modal-aceite').classList.remove('active')
+        currentQuestionIndex = confirma;
     },
 
-    aceite(event) {
-        event.preventDefault();
+    aceite(resp) {
+        if (resp === 'sim') {
+            statusAtual = "Ainda não foi respondida";
+            saveAnswer();
+            showCurrentQuestion()
+            if (currentQuestionIndex === lengthLocal-1) {
+                nextButton.disabled = true;
+                document.querySelector('.btproximo').classList.add('btnactive');
+                document.querySelector('.btnfinalizar').classList.remove('btnactive')
+            } else {
+                document.querySelector('.btproximo').classList.remove('btnactive');
+                document.querySelector('.btnfinalizar').classList.add('btnactive');
+                nextButton.disabled = false;
+            }
+            if (currentQuestionIndex === 0) {
+                previousButton.disabled = true;
+            }else {
+                previousButton.disabled = false;
+            }
+            setCustomMude(currentQuestionIndex)
+           // loadAnswers()
 
-        window.location.href = "../provas/prova.html";
+        } else {
+            return;
+        }
+        document.querySelector('.modal-aceite').classList.remove('active')
+    },
+    closeFim(){
+        document.querySelector('.modalaceitefim').classList.remove('activefim')
+        showCurrentQuestion();
+    },
+
+    openFim(){
+        document.querySelector('.modalaceitefim').classList.add('activefim')
+        type(currentQuestionIndex);
+    },
+
+    finalizar(event) {
+        event.preventDefault();
+        window.location.href = "../finalizar/finalizada.html";
     }
 }
 
-// Carrega as perguntas do arquivo exam.json
-fetch('../../../public/exam.json')
-    .then(response => response.json())
-    .then(data => {
-        prova = data.exam.id;
-        questions = data.exam.questions.question.map(question => question);
-
-       //console.log(questions);
-       //console.log(prova);
-        criarstorage();
-        creatButtons();
-        showCurrentQuestion();
-        loadAnswers();
-        renderQuestion();
-    });
-
-    function criarstorage(){
-       
-        let get = JSON.parse(localStorage.getItem(prova));
-        if (!get){
-            let getnew = [];
-            for(i = 0; i < questions.length; i++){
-                getnew.push({question: questions[i].questionOrder, alternative: "", status: "Ainda não Respondida"});
-            }
-            localStorage.setItem(`${prova}`, JSON.stringify(getnew));
-        }
-    }
+creatButtons();
+showCurrentQuestion();
 
 // Mostra a pergunta atual
 function showCurrentQuestion() {
     // Obter a pergunta atual
-    const currentQuestion = questions[currentQuestionIndex];
-
+    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
+    lengthLocal = localStorageQuestions.length;
     // Renderiza o título da questão
     questionTextElement.innerHTML = `${currentQuestion.statement}`;
 
@@ -80,6 +98,7 @@ function showCurrentQuestion() {
     if (currentQuestion.type === 0) {
         document.querySelector('.prompt').classList.remove('active')
         answerOptionsElement.innerHTML = `<div id="type" style="display:none;">0</div><textarea id="answer" class="subjetiva" rows="15" cols="60"></textarea>`;
+        newCkeditor(answer, 200);
     } else if (currentQuestion.type === 1) {
 
         for (let i = 0; i < currentQuestion.alternatives.alternative.length; i++) {
@@ -96,116 +115,60 @@ function showCurrentQuestion() {
         }
     }
     if (currentQuestionIndex === 0) {
-        prevButton.disabled = true;
+        previousButton.disabled = true;
     }
     setCustomMude(currentQuestionIndex);
+    renderQuestion()
+}
+
+const bntQuest = {
+    muda(btnN) {
+        confirma = currentQuestionIndex;
+       type(--btnN)
+    }
 }
 
 //crias os botões e tbm verifca se esta respondido ou não.
 function creatButtons() {
     var cardbutton = document.getElementById("card-text");
+
+    let contagem = 0;
+    for(var c = 0; c < localStorageQuestions.length; c++){
+        if(localStorage.key(c) === 'prova' || localStorage.key(c) == `res_${prova}`){
+            contagem = ++contagem;
+            console.log(contagem)
+        } 
+    }
     
-    for (var i = 0; i < questions.length; i++) {
+    for (var i = 0; i < contagem; i++) {
+        
         var button = document.createElement("button");
         button.id = "btn-" + (i + 1);
         button.className = "bt-quiz";
         button.innerText = i + 1;
 
+        button.onclick = (function(index) {
+            return function() {
+              bntQuest.muda(index);
+            };
+          })(i + 1);
+
         cardbutton.appendChild(button);
-    };
-
-
+        };
 }
 
 // Adiciona o evento de click no botão "Voltar"
-const prevButton = document.querySelector('#previousbutton');
-prevButton.addEventListener("click", () => {
 
-    const pb_AnswerOptions = document.querySelector('#answer-options');
-    const pb_quizType = pb_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const selectedOption = pb_quizType ? pb_AnswerOptions.querySelector('#answer').value : pb_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-
-    console.log("selectedOption", selectedOption)
-    if (!selectedOption) {
-        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
-        if (consfirmar) {
-            statusAtual = "Ainda não foi respondida";
-            saveAnswer();
-            currentQuestionIndex--;
-            showCurrentQuestion();
-            renderQuestion();
-            if (currentQuestionIndex === 0) {
-                prevButton.disabled = true;
-            }
-            document.querySelector('.btproximo').classList.remove('btnactive');
-            document.querySelector('.btnfinalizar').classList.add('btnactive');
-            nextButton.disabled = false;
-            setCustomMude(currentQuestionIndex)
-            loadAnswers()
-        }
-    } else {
-        statusAtual = "Respondida";
-        saveAnswer();
-        currentQuestionIndex--;
-        showCurrentQuestion();
-        renderQuestion();
-        if (currentQuestionIndex === 0) {
-            prevButton.disabled = true;
-        }
-
-        document.querySelector('.btproximo').classList.remove('btnactive');
-        document.querySelector('.btnfinalizar').classList.add('btnactive');
-        nextButton.disabled = false;
-        setCustomMude(currentQuestionIndex)
-        loadAnswers()
-    }
-    console.log("Voltar")
-});
+previousButton.addEventListener("click", () => {
+    confirma = currentQuestionIndex;
+    type(--currentQuestionIndex);
+  });
 
 
 // Adiciona o evento de click no botão "Proximo"
 nextButton.addEventListener("click", function () {
-
-    const ael_AnswerOptions = document.querySelector('#answer-options');
-    const ael_quizType = ael_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const selectedOption = ael_quizType ? ael_AnswerOptions.querySelector('#answer').value : ael_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
-
-    if (!selectedOption) {
-        var consfirmar = confirm("A questão não foi respondida, deseja prosegir?");
-        if (consfirmar) {
-            statusAtual = "Ainda não foi respondida";
-            saveAnswer();
-            currentQuestionIndex++;
-            showCurrentQuestion()
-            renderQuestion()
-            if (currentQuestionIndex === questions.length - 1) {
-                nextButton.disabled = true;
-                document.querySelector('.btproximo').classList.add('btnactive');
-                document.querySelector('.btnfinalizar').classList.remove('btnactive')
-            }
-            prevButton.disabled = false;
-            setCustomMude(currentQuestionIndex)
-            loadAnswers()
-
-        } else {
-            return;
-        }
-    } else {
-        statusAtual = "Respondida";
-        saveAnswer()
-        currentQuestionIndex++;
-        showCurrentQuestion()
-        renderQuestion()
-        if (currentQuestionIndex === questions.length - 1) {
-            nextButton.disabled = true;
-            document.querySelector('.btproximo').classList.add('btnactive');
-            document.querySelector('.btnfinalizar').classList.remove('btnactive')
-        }
-        prevButton.disabled = false;
-        setCustomMude(currentQuestionIndex);
-        loadAnswers()
-    }
-    console.log("proximo")
+    confirma = currentQuestionIndex;
+    type(++currentQuestionIndex);
 });
 
 function renderQuestion() {
@@ -213,10 +176,11 @@ function renderQuestion() {
     currentQuestionNumberElement.innerText = `${currentQuestionIndex + 1}`;
 
     // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
-    let getStatus = JSON.parse(localStorage.getItem(prova));
-    const currentQuestion = questions[currentQuestionIndex];
+    let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
+    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
     let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
-    answeredStatusElement.innerText = questionStatus[0].status;
+
+    answeredStatusElement.innerText = questionStatus.status;
 
     // Atualiza a pontuação atual (se houver)
     if (currentQuestion.points !== undefined) {
@@ -224,61 +188,84 @@ function renderQuestion() {
     } else {
         currentPointsElement.innerText = '';
     }
+    loadAnswers();
 }
 
 //botões de questões
 function setCustomMude(contIndex) {
-
     var btafter = contIndex + 1;
-    var btBeforeIndex = contIndex;
-    
-    var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+    var btBeforeIndex = 0;
     var btActive = document.getElementById(`btn-${btafter}`);
+    const cards = JSON.parse(localStorage.getItem('res_'+prova));
 
+    // Adiciona um evento de clique em cada card
+    cards.forEach((card, index) => {
+        btBeforeIndex = index + 1;
+        var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+
+      if (card.status === "Ainda não foi respondida"){
+        btBefore.classList.add("bt-quiz-y")
+        btBefore.classList.remove("bt-quiz-active")
+      };
+      if(card.status === "Respondida"){
+        btBefore.classList.add("bt-quiz-x")
+        btBefore.classList.remove("bt-quiz-active")
+        btBefore.classList.remove("bt-quiz-y")
+    };
+    if(card.status === "Ainda não respondida"){
+        btBefore.classList.remove("bt-quiz-active")
+    };
+    });
     if (btActive) {
         btActive.classList.add("bt-quiz-active");
     }
-    if (btBefore) {
-        if(statusAtual=="Respondida"){
-            btBefore.classList.add("bt-quiz-x")
-            btBefore.classList.remove("bt-quiz-active")
-            btBefore.classList.remove("bt-quiz-y")
-        } else{
-            btBefore.classList.add("bt-quiz-y")
-            btBefore.classList.remove("bt-quiz-active")
-        }
-    }
+
 }
 
 // Salvando os dados da resposta no localStorage
-function saveAnswer() {
+function saveAnswer(resp, typeQ) {
+    console.log('resp1',resp);
     const answerOptions = document.querySelector('#answer-options');
-    const quizType = answerOptions.querySelector("#type")?.textContent === '0';
-    const answer = quizType ? answerOptions.querySelector('#answer').value : answerOptions.querySelector('input[name="answer"]:checked')?.value;
+    let answer;
+    let type = false;
+    if(answerOptions.querySelector("#type")?.textContent === '0'){
+        //answer = CKEDITOR.instances.answer.getData();
+        ultQuest=true
+       type = true;
+    } else {
+       // answer = answerOptions.querySelector('input[name="answer"]:checked')?.value;
+    };
     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    
-
+    console.log('currentQuestion',currentQuestion)
+    if(resp === undefined) {
+        console.log('resposta',answer);
+        answer = "";
+    }else {
+        console.log('resposta',answer);
+        answer = resp;
+    }
     let data = {
         prova: prova,
         questao: currentQuestion,
         resposta: answer,
-        status:  statusAtual
+        status:  statusAtual,
+        type: type
     }
     storage(data);
+    
 }
 
 // Carregando os dados das respostas do localStorage
 function loadAnswers() {
     let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
-    let get = JSON.parse(localStorage.getItem(prova));
-
+    let get = JSON.parse(localStorage.getItem('res_'+prova));
     if (get){
     let respostaSalva = get.filter(item => item.question == numeroQuestion);
 
     if (respostaSalva) { // se houver uma resposta salva
-        setAnswer(respostaSalva[0].alternative); // preencher a resposta da questão anterior com a resposta salva
+        setAnswer(respostaSalva.alternative); // preencher a resposta da questão anterior com a resposta salva
     }
 }
 }
@@ -291,23 +278,23 @@ function clearAnswers() {
     }
 }
 
+//coloca no html a resposta que vem do localstorage
 function setAnswer(answers) {
-    const sa_AnswerOptions = document.querySelector('#answer-options');
-    const sa_quizType = sa_AnswerOptions.querySelector("#type")?.textContent === '0';
-    const sa_SelectedOption = sa_quizType ? sa_AnswerOptions.querySelector('#answer') : sa_AnswerOptions.querySelector('input[name="answer"]:checked');
-    if (sa_SelectedOption) {
-        sa_AnswerOptions.querySelector('#answer').value = answers;;
-    }else {
+    var sa_AnswerOptions = document.querySelector('#answer-options');
+   if(sa_AnswerOptions.querySelector("#type")?.textContent === '0'){
+        CKEDITOR.instances.answer.setData(answers);
+   }else {
         // Resposta de múltipla escolha
         const answerRadio = sa_AnswerOptions.querySelector(`input[value="${parseInt(answers)}"]`);
         if (answerRadio) {
-          answerRadio.checked = true;
+        answerRadio.checked = true;
         }
-      }
+   };
+   
 }
-
+//Insere as resposta no localStorage
 function storage(data) {
-    let get = JSON.parse(localStorage.getItem(data.prova));
+    let get = JSON.parse(localStorage.getItem('res_'+data.prova));
     let newQuestion = get.filter(item => item.question == data.questao);
 
     if (newQuestion.length != 0){
@@ -317,9 +304,104 @@ function storage(data) {
             }
             return {question: items.question, alternative: items.alternative, status: items.status}
         })
-        localStorage.setItem(`${data.prova}`, JSON.stringify(storagequest));
+        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(storagequest));
     }else {
         get.push({question: data.questao, alternative: data.resposta, status: data.status});
-        localStorage.setItem(`${data.prova}`, JSON.stringify(get));
+        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(get));
     }
+    if (data.type){
+        CKEDITOR.instances['answer'].destroy(true);
+    }
+}
+
+//verifica se a função é dicertativa ou multipla escolha
+function type(index){
+    console.log('inicial',index)
+    const btn_AnswerOptions = document.querySelector('#answer-options');
+    
+    if(btn_AnswerOptions.querySelector("#type")?.textContent === '0'){
+        btnSelectedOption = CKEDITOR.instances.answer.getData()
+    }else {
+        btnSelectedOption = btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
+    };
+
+    if (!btnSelectedOption) {
+        currentQuestionIndex = (index);
+        Modalprova.open();
+    } else {
+        currentQuestionIndex = (index);
+        statusAtual = "Respondida";
+        saveAnswer(btnSelectedOption)
+        showCurrentQuestion()
+        if (currentQuestionIndex === lengthLocal-1) {
+            document.querySelector('.btproximo').classList.add('btnactive');
+            document.querySelector('.btnfinalizar').classList.remove('btnactive')
+            nextButton.disabled = true;
+            previousButton.disabled = false;
+        } else {
+            document.querySelector('.btproximo').classList.remove('btnactive');
+            document.querySelector('.btnfinalizar').classList.add('btnactive');
+            previousButton.disabled = false;
+            nextButton.disabled = false;
+        }
+        if (currentQuestionIndex === 0) {
+            previousButton.disabled = true;
+            nextButton.disabled = false;
+        }
+        setCustomMude(currentQuestionIndex)
+        loadAnswers()
+    }
+}
+
+//criação do CKEDITO no textarea
+function newCkeditor(id,height){
+    return CKEDITOR.replace(id, {
+        height: height,
+        extraPlugins: 'uploadimage,image2, filebrowser, imageresize, mathjax, leaui_formula, liststyle, custom_list_styles_alpha, custom_list_styles_roman, justify',
+        removePlugins: 'easyimage, cloudservices, image',
+        mathJaxLib: '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        toolbar : [
+            { name: 'document', items: [ 'Source'] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+            { name: 'editing', items: [ 'Scayt' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'paragraph', items: [
+                'NumberedList', 'BulletedList',
+                '-', 'Mathjax', 'LeauiFormula',
+                '-',
+                    { name: 'ListTypeAlpha', items: ['custom_list_styles_alpha'], label: 'Change List Type', command: 'changeListTypeAlpha'},
+                    { name: 'ListTypeRoman', items: ['custom_list_styles_roman'], label: 'Change List Type', command: 'changeListTypeRoman'},
+                '-', 'Outdent', 'Indent',
+                '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                '-', 'BidiLtr', 'BidiRtl' ]
+            },
+            { name: 'insert', items: [  'Image' , 'Table' ,'Smiley', 'SpecialChar'] },
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] }
+        ],
+        
+         stylesSet: [{
+              name: 'Narrow image',
+              type: 'widget',
+              widget: 'image',
+              attributes: {
+                'class': 'image-narrow'
+              }
+            },
+            {
+              name: 'Wide image',
+              type: 'widget',
+              widget: 'image',
+              attributes: {
+                'class': 'image-wide'
+              }
+            }
+          ],
+
+          image2_alignClasses: ['image-align-left', 'image-align-center', 'image-align-right'],
+          image2_disableResizer: true,
+          removeButtons: 'PasteFromWord,Save,TextField,Textarea,Select,Button,ImageButton,HiddenField,CreatePlaceholder,Flash,SpecialChar,PageBreak,Iframe,About,Smiley,Form,Checkbox,Radio,Textarea,TextField',
+            removeDialogTabs: 'image:advanced;link:advanced',
+            entities_processNumerical : true,
+    });		
 }
