@@ -101,7 +101,6 @@ fetch('../../../public/exam.json')
 }
 
 function getQuestionLength(prova) {
-  console.log(prova)
   const request = indexedDB.open(`prova_${prova}`, 1);
   
    request.onsuccess = function(event) {
@@ -112,12 +111,8 @@ function getQuestionLength(prova) {
 
     countRequest.onsuccess = function(event) {
       var count = countRequest.result;
-      console.log("fun ", count)
-
+      localStorage.setItem(`length_${prova}`, JSON.stringify(count));
       let get = JSON.parse(localStorage.getItem(`res_${prova}`));
-      console.log('get ',get)
-      console.log(prova)
-      console.log('count ', count)
       if (!get){
         let getnew = [];
         var cont = 0;

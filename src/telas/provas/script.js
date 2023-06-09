@@ -1,18 +1,17 @@
 // Array para armazenar as perguntas do quiz
 let questions = [];
-var lengthLocal;
-const prova = JSON.parse(localStorage.getItem('prova'));;
+const prova = JSON.parse(localStorage.getItem('prova'));
+const lengthLocal = JSON.parse(localStorage.getItem(`length_${prova}`));
 let questProva = "";
 let insertRespostaQuest = [];
 let statusAtual = "";
 let statusBtn = [];
 let confirma ="";
-var localStorageQuestions = localStorage;
 var ultQuest;
 var btnSelectedOption;
 
 // Índice da pergunta atual
-let currentQuestionIndex = 0;
+let currentQuestionIndex = 1;
 
 // Criando uma array para armazenar as respostas do usuário
 const userAnswers = [];
@@ -41,7 +40,7 @@ const Modalprova = {
             statusAtual = "Ainda não foi respondida";
             saveAnswer();
             showCurrentQuestion()
-            if (currentQuestionIndex === lengthLocal-1) {
+            if (currentQuestionIndex === lengthLocal) {
                 nextButton.disabled = true;
                 document.querySelector('.btproximo').classList.add('btnactive');
                 document.querySelector('.btnfinalizar').classList.remove('btnactive')
@@ -70,7 +69,6 @@ const Modalprova = {
 
     openFim(){
         document.querySelector('.modalaceitefim').classList.add('activefim')
-        type(currentQuestionIndex);
     },
 
     finalizar(event) {
@@ -78,69 +76,75 @@ const Modalprova = {
         window.location.href = "../finalizar/finalizada.html";
     }
 }
-
-creatButtons();
-showCurrentQuestion();
-
+const bntQuest = {
+    muda(btnN) {
+        console.log("btnN", btnN)
+        confirma = currentQuestionIndex;
+       type(btnN)
+    }
+}
 // Mostra a pergunta atual
 function showCurrentQuestion() {
-    // Obter a pergunta atual
-    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
-    lengthLocal = localStorageQuestions.length;
-    // Renderiza o título da questão
-    questionTextElement.innerHTML = `${currentQuestion.statement}`;
-
-    // Renderiza as opções de resposta
-    while (answerOptionsElement.firstChild) {
-        answerOptionsElement.removeChild(answerOptionsElement.firstChild);
-    }
-
-    if (currentQuestion.type === 0) {
-        document.querySelector('.prompt').classList.remove('active')
-        answerOptionsElement.innerHTML = `<div id="type" style="display:none;">0</div><textarea id="answer" class="subjetiva" rows="15" cols="60"></textarea>`;
-        newCkeditor(answer, 200);
-    } else if (currentQuestion.type === 1) {
-
-        for (let i = 0; i < currentQuestion.alternatives.alternative.length; i++) {
-            const choice = currentQuestion.alternatives.alternative[i];
-            const newAnswerOption = document.createElement('div');
-            newAnswerOption.classList.add('r' + choice.alternativeOrder % 2);
-
-            newAnswerOption.innerHTML = `
-                <input type="radio" name="answer" id="${choice.alternativeOrder}" value="${choice.alternativeOrder}" />
-                <label for="${choice.alternativeOrder}">${choice.alternativeText}</label>
-            `;
-            document.querySelector('.prompt').classList.add('active')
-            answerOptionsElement.appendChild(newAnswerOption);
+    const handler = new IndexedDBHandler(prova);
+    handler.getQuestion(currentQuestionIndex)
+        .then(question => {
+        // Renderiza o título da questão
+        questionTextElement.innerHTML = `${question.statement}`;
+        // Renderiza as opções de resposta
+        while (answerOptionsElement.firstChild) {
+            answerOptionsElement.removeChild(answerOptionsElement.firstChild);
         }
-    }
+
+        if (question.type === 0) {
+            document.querySelector('.prompt').classList.remove('active')
+            answerOptionsElement.innerHTML = `<div id="type" style="display:none;">0</div><textarea id="answer" class="subjetiva" rows="15" cols="60"></textarea>`;
+            newCkeditor(answer, 200);
+        } else if (question.type === 1) {
+
+            for (let i = 0; i < question.alternatives.alternative.length; i++) {
+                const choice = question.alternatives.alternative[i];
+                const newAnswerOption = document.createElement('div');
+                newAnswerOption.classList.add('r' + choice.alternativeOrder % 2);
+
+                newAnswerOption.innerHTML = `
+                    <input type="radio" name="answer" id="${choice.alternativeOrder}" value="${choice.alternativeOrder}" />
+                    <label for="${choice.alternativeOrder}">${choice.alternativeText}</label>
+                `;
+                document.querySelector('.prompt').classList.add('active')
+                answerOptionsElement.appendChild(newAnswerOption);
+            }
+        }
+        let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
+        let questionStatus = getStatus.filter(item => item.question === question.questionOrder);
+
+         // Atualiza o número da pergunta atual
+        currentQuestionNumberElement.innerText = question.questionOrder;
+        answeredStatusElement.innerText = questionStatus[0].status;
+
+        // Atualiza a pontuação atual (se houver)
+        if (question.points != undefined) {
+            currentPointsElement.innerText = question.points;
+        } else {
+            currentPointsElement.innerText = '';
+        }
+        loadAnswers();
+        })
+        .catch(error => {
+            console.log('Erro ao obter a questão:', error);
+        });
+   
     if (currentQuestionIndex === 0) {
         previousButton.disabled = true;
     }
     setCustomMude(currentQuestionIndex);
-    renderQuestion()
-}
-
-const bntQuest = {
-    muda(btnN) {
-        confirma = currentQuestionIndex;
-       type(--btnN)
-    }
 }
 
 //crias os botões e tbm verifca se esta respondido ou não.
 function creatButtons() {
     var cardbutton = document.getElementById("card-text");
-
-    let contagem = 0;
-    for(var c = 0; c < localStorageQuestions.length; c++){
-        if(localStorage.key(c) === 'prova' || localStorage.key(c) == `res_${prova}`){
-            contagem = ++contagem;
-            console.log(contagem)
-        } 
-    }
-    
-    for (var i = 0; i < contagem; i++) {
+    //localStorage.setItem(`length_${prova}`, JSON.stringify(count));   
+    const count = JSON.parse(localStorage.getItem(`length_${prova}`));
+    for (var i = 0; i < count; i++) {
         
         var button = document.createElement("button");
         button.id = "btn-" + (i + 1);
@@ -158,9 +162,9 @@ function creatButtons() {
 }
 
 // Adiciona o evento de click no botão "Voltar"
-
 previousButton.addEventListener("click", () => {
     confirma = currentQuestionIndex;
+    window.scrollTo(0, 0);
     type(--currentQuestionIndex);
   });
 
@@ -168,34 +172,16 @@ previousButton.addEventListener("click", () => {
 // Adiciona o evento de click no botão "Proximo"
 nextButton.addEventListener("click", function () {
     confirma = currentQuestionIndex;
+    window.scrollTo(0, 0);
     type(++currentQuestionIndex);
+    
 });
-
-function renderQuestion() {
-    // Atualiza o número da pergunta atual
-    currentQuestionNumberElement.innerText = `${currentQuestionIndex + 1}`;
-
-    // Atualiza o status da pergunta (respondida ou não) - new: verificar se tem resposta no localstorage.
-    let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
-    const currentQuestion = JSON.parse(localStorage.getItem(`quest_${currentQuestionIndex + 1}_${prova}`));//localStorageQuestions[currentQuestionIndex];
-    let questionStatus = getStatus.filter(item => item.question == currentQuestion.questionOrder);
-
-    answeredStatusElement.innerText = questionStatus.status;
-
-    // Atualiza a pontuação atual (se houver)
-    if (currentQuestion.points !== undefined) {
-        currentPointsElement.innerText = `${currentQuestion.points}`;
-    } else {
-        currentPointsElement.innerText = '';
-    }
-    loadAnswers();
-}
 
 //botões de questões
 function setCustomMude(contIndex) {
-    var btafter = contIndex + 1;
+    var btafter = contIndex;
     var btBeforeIndex = 0;
-    var btActive = document.getElementById(`btn-${btafter}`);
+    var btActive = document.getElementById(`btn-${contIndex}`);
     const cards = JSON.parse(localStorage.getItem('res_'+prova));
 
     // Adiciona um evento de clique em cada card
@@ -219,11 +205,10 @@ function setCustomMude(contIndex) {
     if (btActive) {
         btActive.classList.add("bt-quiz-active");
     }
-
 }
 
 // Salvando os dados da resposta no localStorage
-function saveAnswer(resp, typeQ) {
+function saveAnswer(resp) {
     console.log('resp1',resp);
     const answerOptions = document.querySelector('#answer-options');
     let answer;
@@ -232,18 +217,14 @@ function saveAnswer(resp, typeQ) {
         //answer = CKEDITOR.instances.answer.getData();
         ultQuest=true
        type = true;
-    } else {
-       // answer = answerOptions.querySelector('input[name="answer"]:checked')?.value;
-    };
-    
+    }     
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
-    console.log('currentQuestion',currentQuestion)
     if(resp === undefined) {
         console.log('resposta',answer);
         answer = "";
     }else {
-        console.log('resposta',answer);
+        console.log('resposta alse',answer);
         answer = resp;
     }
     let data = {
@@ -260,14 +241,15 @@ function saveAnswer(resp, typeQ) {
 // Carregando os dados das respostas do localStorage
 function loadAnswers() {
     let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
+    
     let get = JSON.parse(localStorage.getItem('res_'+prova));
+    
     if (get){
-    let respostaSalva = get.filter(item => item.question == numeroQuestion);
-
-    if (respostaSalva) { // se houver uma resposta salva
-        setAnswer(respostaSalva.alternative); // preencher a resposta da questão anterior com a resposta salva
+        let respostaSalva = get.filter(item => item.question == numeroQuestion);
+        if (respostaSalva) { // se houver uma resposta salva
+            setAnswer(respostaSalva[0].alternative); // preencher a resposta da questão anterior com a resposta salva
+        }
     }
-}
 }
 
 // Removendo os dados das respostas do localStorage
@@ -405,3 +387,6 @@ function newCkeditor(id,height){
             entities_processNumerical : true,
     });		
 }
+
+creatButtons();
+showCurrentQuestion();

@@ -307,7 +307,9 @@ textarea {
   
   display: flex;
   justify-content: center;
+  text-align: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .bt-scondary {
@@ -317,15 +319,24 @@ textarea {
 }
 
 .bt-quiz { 
-  width: 20px;
+  width: 34px;
   height: 30px;
   margin: 2px;
   padding: 2px;
-
   background-color: var(--gray);
   
 
   opacity: 0.5;
+}
+#imgTop {
+  width: 2rem;
+}
+#back-to-top {
+  position: fixed;
+  bottom: 50px;
+  right: 6px;
+
+  width: 2rem;
 }
 
 .bt-quiz-x { 
