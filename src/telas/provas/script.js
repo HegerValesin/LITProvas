@@ -114,12 +114,12 @@ function showCurrentQuestion() {
                 answerOptionsElement.appendChild(newAnswerOption);
             }
         }
-        let getStatus = JSON.parse(localStorage.getItem("res_"+prova));
-        let questionStatus = getStatus.filter(item => item.question === question.questionOrder);
-
-         // Atualiza o número da pergunta atual
         currentQuestionNumberElement.innerText = question.questionOrder;
-        answeredStatusElement.innerText = questionStatus[0].status;
+        handler.getResposta(currentQuestionIndex).then(resposta => {
+             // Atualiza o número da pergunta atual
+            answeredStatusElement.innerText = resposta.status;
+        });
+        
 
         // Atualiza a pontuação atual (se houver)
         if (question.points != undefined) {
@@ -182,34 +182,40 @@ function setCustomMude(contIndex) {
     var btafter = contIndex;
     var btBeforeIndex = 0;
     var btActive = document.getElementById(`btn-${contIndex}`);
-    const cards = JSON.parse(localStorage.getItem('res_'+prova));
 
-    // Adiciona um evento de clique em cada card
-    cards.forEach((card, index) => {
-        btBeforeIndex = index + 1;
-        var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+    const handler = new IndexedDBHandler(prova);
+    handler.getRespostasAll()
+        .then(respostas => {
+            const cards = respostas;
+            // Adiciona um evento de clique em cada card
+            cards.forEach((card, index) => {
+                btBeforeIndex = index + 1;
+                var btBefore = document.getElementById(`btn-${btBeforeIndex}`)
+        
+              if (card.status === "Ainda não foi respondida"){
+                btBefore.classList.add("bt-quiz-y")
+                btBefore.classList.remove("bt-quiz-active")
+              };
+              if(card.status === "Respondida"){
+                btBefore.classList.add("bt-quiz-x")
+                btBefore.classList.remove("bt-quiz-active")
+                btBefore.classList.remove("bt-quiz-y")
+            };
+            if(card.status === "Ainda não respondida"){
+                btBefore.classList.remove("bt-quiz-active")
+            };
+            });
+            if (btActive) {
+                btActive.classList.add("bt-quiz-active");
+            }
 
-      if (card.status === "Ainda não foi respondida"){
-        btBefore.classList.add("bt-quiz-y")
-        btBefore.classList.remove("bt-quiz-active")
-      };
-      if(card.status === "Respondida"){
-        btBefore.classList.add("bt-quiz-x")
-        btBefore.classList.remove("bt-quiz-active")
-        btBefore.classList.remove("bt-quiz-y")
-    };
-    if(card.status === "Ainda não respondida"){
-        btBefore.classList.remove("bt-quiz-active")
-    };
-    });
-    if (btActive) {
-        btActive.classList.add("bt-quiz-active");
-    }
+    }).catch(error => {
+            console.log('Erro ao obter a questão:', error);
+        });
 }
 
 // Salvando os dados da resposta no localStorage
 function saveAnswer(resp) {
-    console.log('resp1',resp);
     const answerOptions = document.querySelector('#answer-options');
     let answer;
     let type = false;
@@ -235,21 +241,22 @@ function saveAnswer(resp) {
         type: type
     }
     storage(data);
-    
 }
 
 // Carregando os dados das respostas do localStorage
 function loadAnswers() {
-    let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
-    
-    let get = JSON.parse(localStorage.getItem('res_'+prova));
-    
-    if (get){
-        let respostaSalva = get.filter(item => item.question == numeroQuestion);
-        if (respostaSalva) { // se houver uma resposta salva
-            setAnswer(respostaSalva[0].alternative); // preencher a resposta da questão anterior com a resposta salva
+    const handler = new IndexedDBHandler(prova);
+    handler.getResposta(currentQuestionIndex)
+        .then(resposta => {
+        let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
+        console.log("resposta", resposta);
+        if (numeroQuestion === resposta.question) { // se houver uma resposta salva
+            setAnswer(resposta.alternative); // preencher a resposta da questão anterior com a resposta salva
         }
-    }
+        })
+        .catch(error => {
+            console.log('Erro ao obter a questão:', error);
+        });
 }
 
 // Removendo os dados das respostas do localStorage
@@ -276,24 +283,16 @@ function setAnswer(answers) {
 }
 //Insere as resposta no localStorage
 function storage(data) {
-    let get = JSON.parse(localStorage.getItem('res_'+data.prova));
-    let newQuestion = get.filter(item => item.question == data.questao);
+    const handler = new IndexedDBHandler(prova);
+    handler.updateResposta(data)
+        .then(respostas => {
 
-    if (newQuestion.length != 0){
-        let storagequest = get.map(items => {
-            if(items.question == data.questao){
-                return {question: items.question, alternative: data.resposta, status: data.status}
+            if (data.type){
+                CKEDITOR.instances['answer'].destroy(true);
             }
-            return {question: items.question, alternative: items.alternative, status: items.status}
-        })
-        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(storagequest));
-    }else {
-        get.push({question: data.questao, alternative: data.resposta, status: data.status});
-        localStorage.setItem(`${"res_"+data.prova}`, JSON.stringify(get));
-    }
-    if (data.type){
-        CKEDITOR.instances['answer'].destroy(true);
-    }
+        }).catch(error => {
+            console.log('Erro ao obter a questão:', error);
+        });   
 }
 
 //verifica se a função é dicertativa ou multipla escolha
