@@ -5,19 +5,16 @@ const handler = new IndexedDBHandler(prova);
 handler.getQuestionAll()
 .then(questions => {
   var localStorageQuestions = questions;
-  console.log(localStorageQuestions)
-  let respostaQuest = JSON.parse(localStorage.getItem(`res_${prova}`));
-  //localStorageQuestions = JSON.parse(localStorage.getItem(questProva));
-  
+  handler.getRespostasAll().then(respostas => {
+    var respostaQuest = respostas;
+      console.log('respostaQuest', respostaQuest)
   
       let questaoProva = document.querySelector(".quiz-enun");
       let questionStorage = '';
   
       for (var i=0; i<localStorageQuestions.length; i++) {
-        
         // Criar uma variável para armazenar o HTML das alternativas
         var alternativesHTML = '';
-        
         // Percorrer o array de alternativas e gerar o HTML correspondente para cada uma delas
        // console.log("al",localStorageQuestions[i].alternatives.alternative[1].alternativeText)
        if (localStorageQuestions[i].type === 1){
@@ -86,6 +83,7 @@ handler.getQuestionAll()
       
   
       questaoProva.innerHTML += questionStorage
+    });
 })
 .catch();
 
@@ -113,7 +111,7 @@ const ModalFim = {
         event.preventDefault();
         document.querySelector('.modal-aceite-envia').classList.remove('active')
         localStorage.clear();
-        localStorage.clear();
+        indexedDB.deleteDatabase(`prova_${prova}`);
         window.location.href = "../../../index.html"; 
       }
   

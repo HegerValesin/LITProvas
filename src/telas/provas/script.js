@@ -227,10 +227,8 @@ function saveAnswer(resp) {
     // obtenha o número da questão atual e o valor da pontuação
     const currentQuestion = parseInt(document.querySelector('#current-question').textContent);
     if(resp === undefined) {
-        console.log('resposta',answer);
         answer = "";
     }else {
-        console.log('resposta alse',answer);
         answer = resp;
     }
     let data = {
@@ -305,7 +303,7 @@ function type(index){
     }else {
         btnSelectedOption = btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
     };
-
+console.log("comparar", currentQuestionIndex, lengthLocal)
     if (!btnSelectedOption) {
         currentQuestionIndex = (index);
         Modalprova.open();
@@ -314,7 +312,7 @@ function type(index){
         statusAtual = "Respondida";
         saveAnswer(btnSelectedOption)
         showCurrentQuestion()
-        if (currentQuestionIndex === lengthLocal-1) {
+        if (currentQuestionIndex === lengthLocal) {
             document.querySelector('.btproximo').classList.add('btnactive');
             document.querySelector('.btnfinalizar').classList.remove('btnactive')
             nextButton.disabled = true;
@@ -325,10 +323,14 @@ function type(index){
             previousButton.disabled = false;
             nextButton.disabled = false;
         }
-        if (currentQuestionIndex === 0) {
+        if (currentQuestionIndex === 1 || currentQuestionIndex === 0) {
             previousButton.disabled = true;
             nextButton.disabled = false;
+            if(currentQuestionIndex === 0){
+                currentQuestionIndex = 1
+            }
         }
+
         setCustomMude(currentQuestionIndex)
         loadAnswers()
     }

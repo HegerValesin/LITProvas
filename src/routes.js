@@ -96,6 +96,7 @@ class IndexedDBHandler {
     }
     getQuestion(index) {
       return new Promise((resolve, reject) => {
+        console.log('index', index)
         const request = indexedDB.open(this.dbName, 1);
   
         request.onsuccess = function(event) {
