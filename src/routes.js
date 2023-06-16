@@ -288,7 +288,82 @@ class IndexedDBHandler {
         };
       });
     }
-    
+    iniciandoTempoProva(timeLimit){
+      function verificarTempoProva() {
+        // Obtém os dados da prova do localStorage
+        const tempos = JSON.parse(localStorage.getItem(`tempos_${prova}`));
+      console.log(tempos)
+        // Obtém a hora atual no computador
+        const horaAtual = new Date();
+      
+        // Converte as horas da prova em objetos Date
+        const horaInicial = new Date(`${tempos.DataProva} ${tempos.HoraInicial}`);
+        const horaFinal = new Date(`${tempos.DataProva} ${tempos.HoraFinal}`);
+      
+        // Calcula o tempo decorrido desde o início da prova
+        const tempoDecorrido = horaAtual - horaInicial;
+      
+        // Verifica se o tempo final da prova foi atingido
+        if (horaAtual >= horaFinal) {
+          // Tempo final da prova foi atingido
+          // Executar ações necessárias
+          console.log('Tempo final da prova foi atingido');
+          return;
+        }
+      
+        // Verifica se o tempo limite de prova foi atingido
+        if (tempoDecorrido >= tempos.TempoLimite * 60 * 1000) {
+          // Tempo limite de prova foi atingido
+          // Executar ações necessárias
+          console.log('Tempo limite de prova foi atingido');
+          return;
+        }
+      
+        // Se o tempo final ou o tempo limite não foram atingidos,
+        // configurar um timeout para chamar novamente a função após 5 minutos
+        setTimeout(verificarTempoProva, 5 * 60 * 1000);
+      }
+      
+      // Chamar a função para iniciar a verificação do tempo da prova
+      verificarTempoProva();
+      
+    }
+    tempoProva(data){
+      let get = JSON.parse(localStorage.getItem('tempos_'+data.localStorageprova));
+      console.log("Route",get)
+
+    if (get != null){
+        let storageTempo = {prova: get.localStorageprova, 
+                  DataProva: get.dataP, 
+                  HoraInicial: get.initialTime, 
+                  HoraFinal: get.endTime,
+                  TempoLimite: get.timeLimit,
+                  HoraInicioProva: get.horaIP,
+                  HoraEncerProva: data.horaFP,
+                  TempoGato: data.tempoGP,
+                  Aluno: get.aluno,
+                  TempoAdd: data.tempoADD,
+                  Status: get.statusFinal
+            }
+        localStorage.setItem(`${"tempos_"+data.localStorageprova}`, JSON.stringify(storageTempo));
+        
+    }else {
+      let tempos = {prova: data.localStorageprova, 
+                  DataProva: data.dataP, 
+                  HoraInicial: data.initialTime, 
+                  HoraFinal: data.endTime,
+                  TempoLimite: data.timeLimit,
+                  HoraInicioProva: new Date().toLocaleTimeString(),
+                  HoraEncerProva: '',
+                  TempoGato: '',
+                  Aluno: 123456,
+                  TempoAdd: '',
+                  Status: data.statusFinal
+                };
+        localStorage.setItem(`${"tempos_"+data.localStorageprova}`, JSON.stringify(tempos));
+    }
+       //localStorage.setItem(`horaros_${localStorageprova}`, JSON.stringify(datatimes));
+    }
     topo(){
       window.scrollTo(0, 0);
     }

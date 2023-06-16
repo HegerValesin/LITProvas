@@ -9,6 +9,7 @@ let statusBtn = [];
 let confirma ="";
 var ultQuest;
 var btnSelectedOption;
+var timeLimit = 3;
 
 // Índice da pergunta atual
 let currentQuestionIndex = 1;
@@ -74,6 +75,9 @@ const Modalprova = {
     finalizar(event) {
         event.preventDefault();
         window.location.href = "../finalizar/finalizada.html";
+    },
+    topo(){
+        window.scrollTo(0, 0);
     }
 }
 const bntQuest = {
@@ -159,6 +163,9 @@ function creatButtons() {
 
         cardbutton.appendChild(button);
         };
+
+    const handler = new IndexedDBHandler(prova);
+    handler.iniciandoTempoProva(timeLimit)
 }
 
 // Adiciona o evento de click no botão "Voltar"
@@ -179,7 +186,6 @@ nextButton.addEventListener("click", function () {
 
 //botões de questões
 function setCustomMude(contIndex) {
-    var btafter = contIndex;
     var btBeforeIndex = 0;
     var btActive = document.getElementById(`btn-${contIndex}`);
 
@@ -277,14 +283,12 @@ function setAnswer(answers) {
         answerRadio.checked = true;
         }
    };
-   
 }
 //Insere as resposta no localStorage
 function storage(data) {
     const handler = new IndexedDBHandler(prova);
     handler.updateResposta(data)
         .then(respostas => {
-
             if (data.type){
                 CKEDITOR.instances['answer'].destroy(true);
             }
@@ -295,15 +299,12 @@ function storage(data) {
 
 //verifica se a função é dicertativa ou multipla escolha
 function type(index){
-    console.log('inicial',index)
     const btn_AnswerOptions = document.querySelector('#answer-options');
-    
     if(btn_AnswerOptions.querySelector("#type")?.textContent === '0'){
         btnSelectedOption = CKEDITOR.instances.answer.getData()
     }else {
         btnSelectedOption = btn_AnswerOptions.querySelector('input[name="answer"]:checked')?.value;
     };
-console.log("comparar", currentQuestionIndex, lengthLocal)
     if (!btnSelectedOption) {
         currentQuestionIndex = (index);
         Modalprova.open();
@@ -330,7 +331,6 @@ console.log("comparar", currentQuestionIndex, lengthLocal)
                 currentQuestionIndex = 1
             }
         }
-
         setCustomMude(currentQuestionIndex)
         loadAnswers()
     }
@@ -388,6 +388,5 @@ function newCkeditor(id,height){
             entities_processNumerical : true,
     });		
 }
-
 creatButtons();
 showCurrentQuestion();

@@ -1,3 +1,7 @@
+var dataP, initialTime, endTime, timeLimit, 
+    horaIP, horaFP, tempoGP, aluno, 
+    tempoADD, statusFinal, localStorageprova;
+
 const ModalAp = {
     open() {
         document.querySelector('.modal-aceite').classList.add('active')
@@ -6,8 +10,24 @@ const ModalAp = {
         document.querySelector('.modal-aceite').classList.remove('active')
     },
     aceite(event) {
-        event.preventDefault();
-        window.location.href = "../provas/prova.html"; 
+      let data = {
+        dataP, 
+        initialTime, 
+        endTime,
+        timeLimit,
+        horaIP,
+        horaFP,
+        tempoGP,
+        aluno,
+        tempoADD,
+        statusFinal: 'Inicido',
+        localStorageprova: JSON.parse(localStorage.getItem("prova"))
+    }
+    console.log("Autenticação 01",data)
+    const handler = new IndexedDBHandler(localStorageprova);
+      handler.tempoProva(data);
+      event.preventDefault();
+      window.location.href = "../provas/prova.html"; 
     }
 }
 
@@ -17,13 +37,13 @@ fetch('../../../public/exam.json')
     // Aqui você pode acessar os dados do seu arquivo JSON
     const exam = data.exam;
     let bottomcontainer = document.querySelector(".bottom-container");
-
     // Encontre os elementos HTML onde você deseja inserir as informações
-    const date = exam.date;
-    const initialTime = exam.initialTime;
-    const endTime = exam.endTime;
+    dataP = exam.date;
+    initialTime = exam.initialTime;
+    endTime = exam.endTime;
     const tentativas = 1;
-    var localStorageprova = JSON.parse(localStorage.getItem("prova"));
+    timeLimit = exam.timeLimit;
+    localStorageprova = JSON.parse(localStorage.getItem("prova"));
     var questaoJSON = data.exam.questions.question;
 
     if(exam.id != localStorageprova) {
@@ -43,8 +63,8 @@ fetch('../../../public/exam.json')
                     dessa prova</p>
                 <p class="termo"> Aceito os termos ao clicar no botão abaixo.</p>
                 <p class="tentativas"> Tentativas permitidas: ${tentativas} </p>
-                <p class="tentativas">Esse questionário foi aberto em, ${date}, ${initialTime}</p>
-                <p class="tentativas">O questionário será fechado em, ${date}, ${endTime}</p>
+                <p class="tentativas">Esse questionário foi aberto em, ${dataP}, ${initialTime}</p>
+                <p class="tentativas">O questionário será fechado em, ${dataP}, ${endTime}</p>
 
                 <button onclick="ModalAp.open()">Tentar responder o questionário agora</button>
     `
@@ -52,10 +72,6 @@ fetch('../../../public/exam.json')
     divs.innerHTML = apresetacao;
     bottomcontainer.append(divs);
   }).catch(error => console.error("Erro ao ler o arquivo JSON:", error));
-
-  async function criarstorage(){
-     
-}
 
 function getQuestionlLength(prova, questaoJSON) {
   const request = indexedDB.open(`prova_${prova}`, 1);
