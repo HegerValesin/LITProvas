@@ -96,8 +96,7 @@
             value="Finalizar"
             class="btnfinalizar btn btnactive"
             id="btfinalizar" 
-            onclick="Modalprova.openFim()"
-          />
+            />
         </div>
         
       </form>
@@ -109,8 +108,8 @@
               <h4 id="text-modal">A questão não foi respondida, deseja prosegir?</h4>
 
               <div class="input-grupo">
-                  <a href="#" onclick="Modalprova.close()" class="button cancel">Não</a>
-                  <button onclick="Modalprova.aceite('sim')" class="fimModal">Sim</button>
+                  <a href="#" id="closeButtonProva" class="button cancel">Não</a>
+                  <button id="acceptButtonProva" class="fimModal">Sim</button>
               </div>
           </div>
 
@@ -122,13 +121,13 @@
               <h4 id="textmodalfim">Deseja finalizar sua prova?</h4>
 
               <div class="inputgrupofim">
-                  <a href="#" onclick="Modalprova.closeFim()" class="button cancel">Não</a>
-                  <button onclick="Modalprova.finalizar(event)" class="fimModalsfim fimdesativarfim">Sim</button>
+                  <a href="#" id="closeFinButtonProva" class="button cancel">Não</a>
+                  <button id="finButtonProva" class="fimModalsfim fimdesativarfim">Sim</button>
               </div>
           </div>
       </div>
   </div>
-  <a href="#" onclick="Modalprova.topo()" id="back-to-top"><img id="imgTop" src="../../../public/img/up-arrow.png" alt="Topo de Página" ></a>
+  <a href="#" id="back-to-top"><img id="imgTop" src="../../../public/img/up-arrow.png" alt="Topo de Página" ></a>
   <script src="../../../public/js/ckeditor/ckeditor.js"></script>
   </body>
 </html>

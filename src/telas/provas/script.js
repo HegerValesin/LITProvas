@@ -102,7 +102,7 @@ function showCurrentQuestion() {
         if (question.type === 0) {
             document.querySelector('.prompt').classList.remove('active')
             answerOptionsElement.innerHTML = `<div id="type" style="display:none;">0</div><textarea id="answer" class="subjetiva" rows="15" cols="60"></textarea>`;
-            newCkeditor(answer, 200);
+            
         } else if (question.type === 1) {
 
             for (let i = 0; i < question.alternatives.alternative.length; i++) {
@@ -117,6 +117,11 @@ function showCurrentQuestion() {
                 document.querySelector('.prompt').classList.add('active')
                 answerOptionsElement.appendChild(newAnswerOption);
             }
+        }
+        if (question.type === 0) {
+            newCkeditor(answer, 200);
+        }else {
+            CKEDITOR.instances['answer'].destroy(true);
         }
         currentQuestionNumberElement.innerText = question.questionOrder;
         handler.getResposta(currentQuestionIndex).then(resposta => {
@@ -253,7 +258,7 @@ function loadAnswers() {
     handler.getResposta(currentQuestionIndex)
         .then(resposta => {
         let numeroQuestion = parseInt(document.querySelector('#current-question').textContent);
-        console.log("resposta", resposta);
+        console.log("resposta", resposta, '/', resposta.alternative);
         if (numeroQuestion === resposta.question) { // se houver uma resposta salva
             setAnswer(resposta.alternative); // preencher a resposta da questão anterior com a resposta salva
         }
@@ -273,6 +278,7 @@ function clearAnswers() {
 
 //coloca no html a resposta que vem do localstorage
 function setAnswer(answers) {
+    console.log("answers", answers)
     var sa_AnswerOptions = document.querySelector('#answer-options');
    if(sa_AnswerOptions.querySelector("#type")?.textContent === '0'){
         CKEDITOR.instances.answer.setData(answers);
@@ -290,7 +296,7 @@ function storage(data) {
     handler.updateResposta(data)
         .then(respostas => {
             if (data.type){
-                CKEDITOR.instances['answer'].destroy(true);
+               // CKEDITOR.instances['answer'].destroy(true);
             }
         }).catch(error => {
             console.log('Erro ao obter a questão:', error);
@@ -335,6 +341,38 @@ function type(index){
         loadAnswers()
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var closeButtonProva = document.getElementById('closeButtonProva');
+    var acceptButtonProva = document.getElementById('acceptButtonProva');
+    var finButtonProva = document.getElementById('finButtonProva');
+    var closeFinButtonProva = document.getElementById('closeFinButtonProva');
+    var topoButtonprova = document.getElementById('back-to-top');
+    var btfinalizar = document.getElementById('btfinalizar');
+    
+    closeButtonProva?.addEventListener('click', () => {
+        Modalprova.close()
+      });
+    finButtonProva?.addEventListener('click', () => {
+        Modalprova.finalizar(event)
+      });
+  
+    topoButtonprova?.addEventListener('click', () => {
+      Modalprova.topo()
+    });
+
+    acceptButtonProva?.addEventListener('click', () => {
+        Modalprova.aceite('sim')
+    });
+    closeFinButtonProva?.addEventListener('click', () => {
+        Modalprova.closeFim()
+    });
+
+    btfinalizar?.addEventListener('click', () => {
+        Modalprova.openFim()
+      });
+  
+  });
 
 //criação do CKEDITO no textarea
 function newCkeditor(id,height){

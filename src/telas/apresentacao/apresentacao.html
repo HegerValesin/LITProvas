@@ -16,7 +16,6 @@
 
     <script src="../../../public/js/script.js" defer></script>
     <script src="../../routes.js" defer></script>
-    <script src="script.js" defer></script>
   </head>
 
   <body>
@@ -51,6 +50,9 @@
         <div class="bottom-container">
           <!-- Conteúdo da div de baixo aqui -->
         </div>
+        <div class="bottom-termos">
+          <button id="openButton">Tentar responder o questionário agora</button>
+        </div>
       </div>
     </section>
 
@@ -60,13 +62,15 @@
           <h4>Você confirma os termos para iniciar a prova?</h4>
 
           <div class="input-grupo">
-            <a href="#" onclick="ModalAp.close()" class="button cancel"
+            <a href="#" id="closeButton" class="button cancel"
               >Cancelar</a
             >
-            <button onclick="ModalAp.aceite(event)">Aceito</button>
+            <button id="acceptButton">Aceito</button>
           </div>
         </div>
       </div>
     </div>
+    
   </body>
+  <script src="script.js"></script>
 </html>

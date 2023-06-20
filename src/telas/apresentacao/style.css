@@ -193,8 +193,16 @@ header .header-bg .users a img {
 .bottom-container .tentativas {
   margin-top: 30px;
 }
+.bottom-termos  {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-.bottom-container button {
+  box-sizing: border-box;
+}
+.bottom-termos button {
   width: 30%;
   height: 50px;
 }

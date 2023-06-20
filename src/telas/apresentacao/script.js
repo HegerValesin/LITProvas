@@ -2,35 +2,6 @@ var dataP, initialTime, endTime, timeLimit,
     horaIP, horaFP, tempoGP, aluno, 
     tempoADD, statusFinal, localStorageprova;
 
-const ModalAp = {
-    open() {
-        document.querySelector('.modal-aceite').classList.add('active')
-    },
-    close() {
-        document.querySelector('.modal-aceite').classList.remove('active')
-    },
-    aceite(event) {
-      let data = {
-        dataP, 
-        initialTime, 
-        endTime,
-        timeLimit,
-        horaIP,
-        horaFP,
-        tempoGP,
-        aluno,
-        tempoADD,
-        statusFinal: 'Inicido',
-        localStorageprova: JSON.parse(localStorage.getItem("prova"))
-    }
-    console.log("Autenticação 01",data)
-    const handler = new IndexedDBHandler(localStorageprova);
-      handler.tempoProva(data);
-      event.preventDefault();
-      window.location.href = "../provas/prova.html"; 
-    }
-}
-
 fetch('../../../public/exam.json')
   .then(response => response.json())
   .then(data => {
@@ -64,9 +35,7 @@ fetch('../../../public/exam.json')
                 <p class="termo"> Aceito os termos ao clicar no botão abaixo.</p>
                 <p class="tentativas"> Tentativas permitidas: ${tentativas} </p>
                 <p class="tentativas">Esse questionário foi aberto em, ${dataP}, ${initialTime}</p>
-                <p class="tentativas">O questionário será fechado em, ${dataP}, ${endTime}</p>
-
-                <button onclick="ModalAp.open()">Tentar responder o questionário agora</button>
+                <p class="tentativas">O questionário será fechado em, ${dataP}, ${endTime}</p>                
     `
     let divs = document.createElement("div");
     divs.innerHTML = apresetacao;
@@ -81,3 +50,51 @@ function getQuestionlLength(prova, questaoJSON) {
     console.log('Erro ao abrir o banco de dados IndexedDB.');
   };
 }
+
+const ModalAp = {
+  open() {
+      document.querySelector('.modal-aceite').classList.add('active')
+  },
+  close: () => {
+      document.querySelector('.modal-aceite').classList.remove('active')
+  },
+  accept: () => {
+    let data = {
+      dataP, 
+      initialTime, 
+      endTime,
+      timeLimit,
+      horaIP,
+      horaFP,
+      tempoGP,
+      aluno,
+      tempoADD,
+      statusFinal: 'Inicido',
+      localStorageprova: JSON.parse(localStorage.getItem("prova"))
+  }
+  console.log("Autenticação 01",data)
+  const handler = new IndexedDBHandler(localStorageprova);
+    handler.tempoProva(data);
+    event.preventDefault();
+    window.location.href = "../provas/prova.html"; 
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var acceptButton = document.getElementById('acceptButton');
+  var closeButton = document.getElementById('closeButton');
+  var openButton = document.getElementById('openButton');
+  
+    acceptButton?.addEventListener('click', () => {
+      ModalAp.accept();
+    });
+    closeButton?.addEventListener('click', () => {
+      ModalAp.close();
+    });
+
+  openButton?.addEventListener('click', () => {
+    console.log("openButton")
+    ModalAp.open();
+  });
+
+});
