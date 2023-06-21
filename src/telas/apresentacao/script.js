@@ -58,7 +58,7 @@ const ModalAp = {
   close: () => {
       document.querySelector('.modal-aceite').classList.remove('active')
   },
-  accept: () => {
+  accept: (event) => {
     let data = {
       dataP, 
       initialTime, 
@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var closeButton = document.getElementById('closeButton');
   var openButton = document.getElementById('openButton');
   
-    acceptButton?.addEventListener('click', () => {
-      ModalAp.accept();
+    acceptButton?.addEventListener('click', (event) => {
+      ModalAp.accept(event);
     });
     closeButton?.addEventListener('click', () => {
       ModalAp.close();

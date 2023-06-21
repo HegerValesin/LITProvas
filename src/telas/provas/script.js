@@ -120,8 +120,6 @@ function showCurrentQuestion() {
         }
         if (question.type === 0) {
             newCkeditor(answer, 200);
-        }else {
-            CKEDITOR.instances['answer'].destroy(true);
         }
         currentQuestionNumberElement.innerText = question.questionOrder;
         handler.getResposta(currentQuestionIndex).then(resposta => {

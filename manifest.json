@@ -17,6 +17,13 @@
     "scripts": ["public/js/background.js"],
     "persistent": false
   },
+  "content_scripts": [
+    {
+      "matches": ["*://hegervfp.local/*"],
+      "js": ["public/js/ckeditor/ckeditor.js", "public/js/ckeditor/config.js"],
+      "run_at": "document_idle"
+    }
+  ], 
   "web_accessible_resources": [
         "public/**",
         "!public/js/script.js",
@@ -28,6 +35,8 @@
         "src/telas/apresentacao/**",
         "!src/telas/apresentacao/script.js",
         "src/telas/finalizar/**",
-        "!src/telas/finalizar/script.js"
+        "!src/telas/finalizar/script.js",
+        "public/js/ckeditor/**",
+        "!public/js/ckeditor/*.js"
       ]
 }

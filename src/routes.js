@@ -289,17 +289,15 @@ class IndexedDBHandler {
       });
     }
     iniciandoTempoProva(timeLimit){
+      let timeoutId;
       function verificarTempoProva() {
         // Obtém os dados da prova do localStorage
         const tempos = JSON.parse(localStorage.getItem(`tempos_${prova}`));
-      console.log(tempos)
         // Obtém a hora atual no computador
         const horaAtual = new Date();
-      
         // Converte as horas da prova em objetos Date
-        const horaInicial = new Date(`${tempos.DataProva} ${tempos.HoraInicial}`);
-        const horaFinal = new Date(`${tempos.DataProva} ${tempos.HoraFinal}`);
-      
+        const horaInicial = parseDateTime(tempos.DataProva, tempos.HoraInicial);
+        const horaFinal = parseDateTime(tempos.DataProva, tempos.HoraFinal);
         // Calcula o tempo decorrido desde o início da prova
         const tempoDecorrido = horaAtual - horaInicial;
       
@@ -307,7 +305,10 @@ class IndexedDBHandler {
         if (horaAtual >= horaFinal) {
           // Tempo final da prova foi atingido
           // Executar ações necessárias
+          document.querySelector('.modalaceitefim').classList.add('activefim')
+          alert('Tempo final da prova foi atingido')
           console.log('Tempo final da prova foi atingido');
+          clearTimeout(timeoutId);
           return;
         }
       
@@ -315,13 +316,20 @@ class IndexedDBHandler {
         if (tempoDecorrido >= tempos.TempoLimite * 60 * 1000) {
           // Tempo limite de prova foi atingido
           // Executar ações necessárias
+          alert('Tempo limite de prova foi atingido')
           console.log('Tempo limite de prova foi atingido');
+          clearTimeout(timeoutId);
           return;
         }
-      
+      // Função auxiliar para converter uma data e hora no formato "dd-mm-yyyy" e "hh:mm:ss" para um objeto Date
+      function parseDateTime(date, time) {
+        const [day, month, year] = date.split('-');
+        const [hours, minutes, seconds] = time.split(':');
+        return new Date(year, month - 1, day, hours, minutes, seconds);
+      }
         // Se o tempo final ou o tempo limite não foram atingidos,
         // configurar um timeout para chamar novamente a função após 5 minutos
-        setTimeout(verificarTempoProva, 5 * 60 * 1000);
+        timeoutId = setTimeout(verificarTempoProva, 3 * 60 * 1000);
       }
       
       // Chamar a função para iniciar a verificação do tempo da prova
@@ -330,7 +338,6 @@ class IndexedDBHandler {
     }
     tempoProva(data){
       let get = JSON.parse(localStorage.getItem('tempos_'+data.localStorageprova));
-      console.log("Route",get)
 
     if (get != null){
         let storageTempo = {prova: get.localStorageprova, 
